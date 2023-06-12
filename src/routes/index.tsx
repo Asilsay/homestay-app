@@ -4,6 +4,7 @@ import HomePage from '../pages/HomePage';
 import ScrollToTop from '../components/ScrollToTop';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
+import Register from '../pages/Register';
 
 const Router = () => {
   return (
@@ -17,6 +18,10 @@ const Router = () => {
         <Route
           path="/login"
           element={<Login />}
+        />
+        <Route
+          path="/register"
+          element={<Register />}
         />
         <Route
           path="*"
