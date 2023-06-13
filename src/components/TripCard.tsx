@@ -39,30 +39,31 @@ const TripCard: FC<Props> = (props) => {
           Rp{price} x {quantitiy}{' '}
           <span className="font-normal">{` `}Night</span>
         </p>
-        <div className="divider my-1"></div>
+        <div className="divider w-96 my-1"></div>
         <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
           Total Rp{gross_amount}
         </p>
       </div>
       <div className="w-3/6 flex flex-col h-full justify-between items-end">
-        {payment_status === 'pending' ? (
+        {payment_status !== 'pending' ? (
+          <>
+            <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-success">
+              Status: {payment_status}
+            </p>
+            <p className="mt-1 text-lg text-neutral font-medium">
+              <label
+                className="btn btn-primary w-32"
+                htmlFor="modal-review"
+              >
+                Review
+              </label>
+            </p>
+          </>
+        ) : (
           <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-error">
             Status: {payment_status}
           </p>
-        ) : (
-          <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-success">
-            Status: {payment_status}
-          </p>
         )}
-
-        <p className="mt-1 text-lg text-neutral font-medium">
-          <label
-            className="btn btn-primary w-32"
-            htmlFor=""
-          >
-            Review
-          </label>
-        </p>
       </div>
     </div>
   );
