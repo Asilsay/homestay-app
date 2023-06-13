@@ -15,6 +15,11 @@ interface InputProps extends FormikProps {
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
 }
 
+interface TextAreaProps extends FormikProps {
+  onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
+  onBlur?: React.FocusEventHandler<HTMLTextAreaElement>;
+}
+
 export const Input: FC<InputProps> = ({
   id,
   label,
@@ -44,6 +49,36 @@ export const Input: FC<InputProps> = ({
       {error && touch && (
         <span className="text-sm text-error label-text-alt">{error}</span>
       )}
+    </div>
+  );
+};
+
+export const TextArea: FC<TextAreaProps> = ({
+  id,
+  label,
+  name,
+  value,
+  error,
+  onChange,
+  onBlur,
+  touch,
+}) => {
+  return (
+    <div className="h-[90px] w-full">
+      <textarea
+        className={`textarea w-full bg-base-200  ${
+          error && touch ? 'textarea-error' : ''
+        }`}
+        id={id}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={label}
+        onBlur={onBlur}
+      />
+      <p>
+        {error && touch && <span className="text-sm text-error">{error}</span>}
+      </p>
     </div>
   );
 };
