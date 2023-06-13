@@ -7,6 +7,7 @@ import NotFound from '../pages/NotFound';
 import Register from '../pages/Register';
 import HostDetail from '../pages/HostDetail';
 import Detail from '../pages/Detail';
+import TripHistory from '../pages/TripHistory';
 
 const Router = () => {
   return (
@@ -32,6 +33,10 @@ const Router = () => {
         <Route
           path="/detail/:homestay_id"
           element={<Detail />}
+        />
+        <Route
+          path="/trip"
+          element={<TripHistory />}
         />
         <Route
           path="*"
