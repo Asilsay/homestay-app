@@ -5,6 +5,8 @@ import ScrollToTop from '../components/ScrollToTop';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Register from '../pages/Register';
+import HostDetail from '../pages/HostDetail';
+import Detail from '../pages/Detail';
 
 const Router = () => {
   return (
@@ -22,6 +24,14 @@ const Router = () => {
         <Route
           path="/register"
           element={<Register />}
+        />
+        <Route
+          path="/host/:homestay_id"
+          element={<HostDetail />}
+        />
+        <Route
+          path="/detail/:homestay_id"
+          element={<Detail />}
         />
         <Route
           path="*"
