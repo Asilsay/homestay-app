@@ -3,7 +3,7 @@ import NavLog from '../assets/homestay_navbar_logo.png';
 
 const Navbar: FC = () => {
   return (
-    <div className="navbar px-16 bg-primary sticky top-0">
+    <div className="navbar px-16 bg-primary sticky top-0 z-50">
       <div className="flex-1">
         <a className="btn btn-ghost normal-case text-xl w-52 hover:bg-inherit">
           <img
