@@ -9,6 +9,7 @@ import HostDetail from '../pages/HostDetail';
 import Detail from '../pages/Detail';
 import TripHistory from '../pages/TripHistory';
 import ValidateHost from '../pages/ValidateHost';
+import Landing from '../pages/Landing';
 
 const Router = () => {
   return (
@@ -42,6 +43,10 @@ const Router = () => {
         <Route
           path="/validate"
           element={<ValidateHost />}
+        />
+        <Route
+          path="/landing"
+          element={<Landing />}
         />
         <Route
           path="*"
