@@ -4,7 +4,7 @@ import { FaStar } from 'react-icons/fa';
 import { data } from '../json/dummyReviews.json';
 import { lazy, Suspense, useState } from 'react';
 
-import { Input, TextArea } from '../components/Input';
+import { Input, InputFile, TextArea } from '../components/Input';
 import { Modals } from '../components/Modals';
 
 const LazyCardReviews = lazy(() => import('../components/Card'));
@@ -19,7 +19,30 @@ const schema = Yup.object().shape({
   price: Yup.number().positive().integer().required('Required'),
 });
 
+const schemaImage = Yup.object().shape({
+  picture_id: Yup.mixed().required('Image is required'),
+});
+
 const HostDetail = () => {
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+    if (file) {
+      formikEditImage.setFieldValue('picture_id', file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const formikEditImage = useFormik({
+    initialValues: {
+      picture_id: null,
+    },
+    validationSchema: schemaImage,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
   const formikEdit = useFormik({
     initialValues: {
       title: '',
@@ -112,6 +135,62 @@ const HostDetail = () => {
           </div>
         </form>
       </Modals>
+      <Modals id="modal-image-edit">
+        <form
+          onSubmit={formikEditImage.handleSubmit}
+          className="flex flex-col gap-3 items-center"
+        >
+          <p className="text-secondary font-medium tracking-wide text-2xl mb-3">
+            Edit Image
+          </p>
+          <div className="w-full h-full p-3">
+            <img
+              src={
+                preview
+                  ? preview
+                  : 'https://placehold.co/600x400/png?text=placeholder+image'
+              }
+              alt=""
+              className="w-full h-full object-center object-cover"
+            />
+          </div>
+
+          <InputFile
+            id="picture_id"
+            name="picture_id"
+            label="picture_id name"
+            onChange={handleImageChange}
+            onBlur={formikEditImage.handleBlur}
+            error={formikEditImage.errors.picture_id}
+            touch={formikEditImage.touched.picture_id}
+          />
+
+          <div className="w-full flex justify-end gap-3">
+            <div className="modal-action mt-0 ">
+              <label
+                htmlFor="modal-image-edit"
+                className="btn btn-ghost"
+              >
+                Close
+              </label>
+              <button
+                type="submit"
+                className="btn btn-secondary w-32"
+                onClick={() => {
+                  const modalCheckbox = document.getElementById(
+                    'modal-edit'
+                  ) as HTMLInputElement;
+                  if (modalCheckbox) {
+                    modalCheckbox.checked = false;
+                  }
+                }}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </Modals>
       <Layout
         chose="section"
         addClass="bg-base-100 flex flex-col justify-center py-16 px-20"
@@ -126,9 +205,12 @@ const HostDetail = () => {
                 className="w-full h-full object-center object-cover"
               />
             </div>
-            <button className="absolute btn btn-primary bottom-6 right-6">
+            <label
+              htmlFor="modal-image-edit"
+              className="absolute btn btn-primary bottom-6 right-6"
+            >
               Edit Image
-            </button>
+            </label>
           </div>
           <div className="w-2/6 flex flex-col">
             <div className="h-1/2 w-full relative bg-cover bg-center">
