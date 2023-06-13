@@ -8,6 +8,7 @@ import Register from '../pages/Register';
 import HostDetail from '../pages/HostDetail';
 import Detail from '../pages/Detail';
 import TripHistory from '../pages/TripHistory';
+import ValidateHost from '../pages/ValidateHost';
 
 const Router = () => {
   return (
@@ -37,6 +38,10 @@ const Router = () => {
         <Route
           path="/trip"
           element={<TripHistory />}
+        />
+        <Route
+          path="/validate"
+          element={<ValidateHost />}
         />
         <Route
           path="*"
