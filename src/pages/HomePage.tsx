@@ -1,7 +1,43 @@
-import Layout from "../components/Layout";
-import CardList from "../components/CardList";
+import Layout from '../components/Layout';
+import withReactContent from 'sweetalert2-react-content';
+import swal from '../utils/swal';
+import CardList from '../components/CardList';
+import { useCookies } from 'react-cookie';
+import api from '../utils/api';
+import { useEffect } from 'react';
 
 const HomePage = () => {
+  const MySwal = withReactContent(swal);
+
+  const [cookie, setCookie] = useCookies(['token', 'pp']);
+  const ckToken = cookie.token;
+  const ckPP = cookie.pp;
+
+  const fetchProfile = async () => {
+    if (!ckPP) {
+      await api
+        .getUserById(ckToken)
+        .then((response) => {
+          const { data } = response.data;
+          setCookie('pp', data.profile_picture, { path: '/' });
+        })
+        .catch((error) => {
+          const { data } = error.response;
+          MySwal.fire({
+            icon: 'error',
+            title: 'Failed',
+            text: `error :  ${data.message}`,
+            showCancelButton: false,
+          });
+        });
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Layout chose="layout">
       <Layout

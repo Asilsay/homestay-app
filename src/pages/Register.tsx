@@ -1,6 +1,6 @@
 import imageReg from '../assets/register.png';
 import withReactContent from 'sweetalert2-react-content';
-import swal from 'sweetalert2';
+import swal from '../utils/swal';
 import NavLog from '../assets/loginreg.png';
 import { Input } from '../components/Input';
 import Layout from '../components/Layout';

@@ -1,6 +1,6 @@
 import imageLogin from '../assets/login.png';
 import withReactContent from 'sweetalert2-react-content';
-import swal from 'sweetalert2';
+import swal from '../utils/swal';
 import NavLog from '../assets/loginreg.png';
 import { Input } from '../components/Input';
 import Layout from '../components/Layout';
@@ -21,7 +21,7 @@ const Login = () => {
   const MySwal = withReactContent(swal);
   const navigate = useNavigate();
 
-  const [, setCookie] = useCookies(['user_id', 'email', 'token']);
+  const [, setCookie] = useCookies(['user_id', 'token']);
 
   const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
     useFormik({
@@ -47,7 +47,6 @@ const Login = () => {
         }).then((result) => {
           if (result.isConfirmed) {
             setCookie('user_id', data.user_id, { path: '/' });
-            setCookie('email', data.email, { path: '/' });
             setCookie('token', data.token, { path: '/' });
             navigate(`/`);
           }
