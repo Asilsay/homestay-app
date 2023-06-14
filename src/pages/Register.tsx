@@ -1,33 +1,65 @@
 import imageReg from '../assets/register.png';
+import withReactContent from 'sweetalert2-react-content';
+import swal from 'sweetalert2';
 import NavLog from '../assets/loginreg.png';
 import { Input } from '../components/Input';
 import Layout from '../components/Layout';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import api from '../utils/api';
 
 const schema = Yup.object().shape({
   email: Yup.string().email('please enter a valid email').required('Required'),
-  full_name: Yup.string().min(6, 'atleat 6 character').required('Required'),
+  fullname: Yup.string().min(6, 'atleat 6 character').required('Required'),
   password: Yup.string().required('Required'),
   phone: Yup.string().required('Required'),
 });
 
 const Register = () => {
+  const MySwal = withReactContent(swal);
+  const navigate = useNavigate();
+
   const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
     useFormik({
       initialValues: {
         email: '',
         password: '',
-        full_name: '',
+        fullname: '',
         phone: '',
       },
       validationSchema: schema,
       onSubmit: (values) => {
-        console.log(values);
+        postRegis(values);
       },
     });
+
+  const postRegis = async (code: any) => {
+    await api
+      .postRegister(code)
+      .then((response) => {
+        const { data, message } = response.data;
+        MySwal.fire({
+          title: 'Success',
+          text: message,
+          showCancelButton: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate(`/login`);
+          }
+        });
+      })
+      .catch((response) => {
+        const { message } = response.data;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${message}`,
+          showCancelButton: false,
+        });
+      });
+  };
 
   return (
     <Layout
@@ -51,19 +83,19 @@ const Register = () => {
           </p>
           <div className="w-full flex flex-col gap-2">
             <div className="w-full">
-              <label htmlFor="full_name">
+              <label htmlFor="fullname">
                 <p className="label-text">Name: </p>
               </label>
               <Input
-                id="full_name"
-                name="full_name"
+                id="fullname"
+                name="fullname"
                 label="type your Name here"
                 type="text"
-                value={values.full_name}
+                value={values.fullname}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={errors.full_name}
-                touch={touched.full_name}
+                error={errors.fullname}
+                touch={touched.fullname}
               />
             </div>
             <div className="w-full">
@@ -74,7 +106,7 @@ const Register = () => {
                 id="phone"
                 name="phone"
                 label="type your phone here"
-                type="number"
+                type="text"
                 value={values.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
