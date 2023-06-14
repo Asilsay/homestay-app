@@ -31,19 +31,19 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
-  putUserById: (token?: string, usid?: string, data?: getUsers) =>
+  putUserById: (token?: string, data?: getUsers) =>
     instance({
       method: 'PUT',
-      url: `users/${usid}`,
+      url: `users`,
       data: data,
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }),
-  delUserById: (token?: string, usid?: string) =>
+  delUserById: (token?: string) =>
     instance({
       method: 'DELETE',
-      url: `users/${usid}`,
+      url: `users`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
