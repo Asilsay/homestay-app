@@ -77,7 +77,7 @@ const TripHistory = () => {
         addClass="bg-base-100 flex flex-col  py-16 px-20"
       >
         <p className="text-4xl font-semibold text-neutral uppercase">
-          History Trip
+          My Reservation
         </p>
         <div className="divider"></div>
 

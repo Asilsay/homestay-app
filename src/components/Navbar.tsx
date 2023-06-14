@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import NavLog from '../assets/homestay_navbar_logo.png';
 
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import swal from '../utils/swal';
 import { useCookies } from 'react-cookie';
 import withReactContent from 'sweetalert2-react-content';
@@ -18,7 +18,6 @@ const Navbar: FC = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         removeCookie('user_id');
-        removeCookie('email');
         removeCookie('token');
         navigate('/landing');
       }
@@ -56,11 +55,11 @@ const Navbar: FC = () => {
               <a>My Homestay</a>
             </li>
             <li>
-              <a>History Trip</a>
+              <Link to="/trip">My Reservation</Link>
             </li>
 
             <li>
-              <a>Profile</a>
+              <Link to="/profile">Profile</Link>
             </li>
             <li>
               <a onClick={() => handleLogout()}>Logout</a>
