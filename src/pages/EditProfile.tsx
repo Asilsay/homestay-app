@@ -1,7 +1,5 @@
 import Layout from "../components/Layout";
-import user from "../assets/users.png";
 import { Modals } from "../components/Modals";
-import { data } from "../json/dummyProfile.json";
 import { Input, TextArea, InputFile } from "../components/Input";
 
 import { useEffect, lazy, Suspense, useState, MouseEventHandler } from "react";
