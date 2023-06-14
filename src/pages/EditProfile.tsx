@@ -82,13 +82,13 @@ const EditProfile = () => {
 
   const formikPassword = useFormik({
     initialValues: {
-      old_password: '',
       password: '',
+      old_password: '',
       confirmPassword: '',
     },
     validationSchema: schemaPassword,
-    onSubmit: (values) => {
-      putUsers(values);
+    onSubmit: async (values) => {
+      await putUsers(values);
     },
   });
 
@@ -103,6 +103,7 @@ const EditProfile = () => {
   };
 
   const putUsers = async (datad?: any) => {
+    await console.log(datad);
     await api
       .putUserById(ckToken, datad)
       .then((response) => {
