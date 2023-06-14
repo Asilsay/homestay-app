@@ -10,7 +10,6 @@ import swal from '../utils/swal';
 import LoadingFull from '../components/LoadingFull';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { getUsers } from '../utils/type';
 import toast from '../utils/toast';
 
 const schemaProfile = Yup.object().shape({
@@ -22,7 +21,7 @@ const schemaProfile = Yup.object().shape({
 
 const schemaPassword = Yup.object().shape({
   old_password: Yup.string().required('Required'),
-  new_password: Yup.string().required('Required'),
+  password: Yup.string().required('Required'),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'password must match')
     .required('Required'),
@@ -37,7 +36,11 @@ const EditProfile = () => {
 
   const navigate = useNavigate();
 
-  const [cookie, , removeCookie] = useCookies(['user_id', 'token']);
+  const [cookie, setCookie, removeCookie] = useCookies([
+    'user_id',
+    'token',
+    'pp',
+  ]);
   const ckToken = cookie.token;
 
   const fetchProfile = async () => {
@@ -73,32 +76,35 @@ const EditProfile = () => {
     },
     validationSchema: schemaProfile,
     onSubmit: async (values) => {
-      await putUsers(values);
+      await formDataToPut(values);
     },
   });
 
   const formikPassword = useFormik({
     initialValues: {
-      fullname: '',
-      email: '',
-      phone: '',
-      profile_picture: '',
+      old_password: '',
+      password: '',
+      confirmPassword: '',
     },
-    validationSchema: schemaProfile,
+    validationSchema: schemaPassword,
     onSubmit: (values) => {
       putUsers(values);
     },
   });
 
-  const putUsers = async (datad?: any) => {
+  const formDataToPut = async (datad?: any) => {
     const formData = new FormData();
     formData.append('email', datad.email);
     formData.append('fullname', datad.fullname);
     formData.append('phone', datad.phone);
     formData.append('profile_picture', datad.profile_picture);
 
+    await putUsers(formData);
+  };
+
+  const putUsers = async (datad?: any) => {
     await api
-      .putUserById(ckToken, formData)
+      .putUserById(ckToken, datad)
       .then((response) => {
         const { message } = response.data;
         navigate('/profile');
@@ -159,6 +165,7 @@ const EditProfile = () => {
 
   useEffect(() => {
     fetchProfile();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -188,41 +195,85 @@ const EditProfile = () => {
 
             {/* Modal */}
             <div className="modal">
-              <div className="modal-box relative flex flex-col gap-3">
+              <form
+                onSubmit={formikPassword.handleSubmit}
+                className="modal-box relative flex flex-col gap-3"
+              >
                 <label
                   htmlFor="my-modal-3"
                   className="btn btn-sm btn-error absolute right-2 top-2 text-white"
                 >
                   ✕
                 </label>
-                <label
-                  htmlFor="oldpass"
-                  className="text-neutral"
-                >
-                  Old password :{' '}
-                </label>
-                <input
-                  className="input input-bordered input-neutral w-full"
-                  type="password"
-                  placeholder="old password"
-                />
-                <label
-                  htmlFor="newpass"
-                  className="text-neutral"
-                >
-                  New password :{' '}
-                </label>
-                <input
-                  className="input input-bordered input-neutral w-full"
-                  type="password"
-                  placeholder="new password"
-                />
+                <div className="w-full">
+                  <label
+                    htmlFor="old_password"
+                    className="label"
+                  >
+                    <p className="label-text">Old Password: </p>
+                  </label>
+                  <Input
+                    id="old_password"
+                    name="old_password"
+                    label="type your old password here"
+                    type="password"
+                    value={formikPassword.values.old_password}
+                    onChange={formikPassword.handleChange}
+                    onBlur={formikPassword.handleBlur}
+                    error={formikPassword.errors.old_password}
+                    touch={formikPassword.touched.old_password}
+                  />
+                </div>
+
+                <div className="w-full">
+                  <label
+                    htmlFor="password"
+                    className="label"
+                  >
+                    <p className="label-text">New Password: </p>
+                  </label>
+                  <Input
+                    id="password"
+                    name="password"
+                    label="type your new password here"
+                    type="password"
+                    value={formikPassword.values.password}
+                    onChange={formikPassword.handleChange}
+                    onBlur={formikPassword.handleBlur}
+                    error={formikPassword.errors.password}
+                    touch={formikPassword.touched.password}
+                  />
+                </div>
+
+                <div className="w-full">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="label"
+                  >
+                    <p className="label-text">Confirm Password: </p>
+                  </label>
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    label="type your confirm password here"
+                    type="password"
+                    value={formikPassword.values.confirmPassword}
+                    onChange={formikPassword.handleChange}
+                    onBlur={formikPassword.handleBlur}
+                    error={formikPassword.errors.confirmPassword}
+                    touch={formikPassword.touched.confirmPassword}
+                  />
+                </div>
+
                 <div className="flex justify-center mr-4 mt-5">
-                  <button className="btn btn-wide btn-primary text-white translate-y-1">
+                  <button
+                    type="submit"
+                    className="btn btn-wide btn-primary text-white translate-y-1"
+                  >
                     Save
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </>
           <div className="px-10 py-10">

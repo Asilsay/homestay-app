@@ -17,16 +17,18 @@ const Profile = () => {
   const MySwal = withReactContent(swal);
   const navigate = useNavigate();
 
-  const [cookie] = useCookies(['user_id', 'token']);
+  const [cookie, setCookie] = useCookies(['user_id', 'token', 'pp']);
   const ckToken = cookie.token;
+  const ckPP = cookie.pp;
 
   const fetchProfile = async () => {
     setLoad(true);
     await api
       .getUserById(ckToken)
-      .then((response) => {
+      .then(async (response) => {
         const { data } = response.data;
-        setDataProfile(data);
+        await setDataProfile(data);
+        await checkPP(data.profile_picture);
       })
       .catch((error) => {
         const { data } = error.response;
@@ -38,6 +40,12 @@ const Profile = () => {
         });
       })
       .finally(() => setLoad(false));
+  };
+
+  const checkPP = async (data: string) => {
+    if (ckPP !== data && data !== undefined) {
+      await setCookie('pp', data, { path: '/' });
+    }
   };
 
   useEffect(() => {

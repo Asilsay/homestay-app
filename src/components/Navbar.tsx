@@ -1,13 +1,14 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import NavLog from '../assets/homestay_navbar_logo.png';
 
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import swal from '../utils/swal';
 import { useCookies } from 'react-cookie';
 import withReactContent from 'sweetalert2-react-content';
 
 const Navbar: FC = () => {
-  const [, , removeCookie] = useCookies(['user_id', 'email', 'token']);
+  const [cookie, , removeCookie] = useCookies(['user_id', 'token', 'pp']);
+  const ckPP = cookie.pp;
   const navigate = useNavigate();
   const MySwal = withReactContent(swal);
 
@@ -19,6 +20,7 @@ const Navbar: FC = () => {
       if (result.isConfirmed) {
         removeCookie('user_id');
         removeCookie('token');
+        removeCookie('pp');
         navigate('/landing');
       }
     });
@@ -27,12 +29,15 @@ const Navbar: FC = () => {
   return (
     <div className="navbar px-16 bg-primary sticky top-0 z-50">
       <div className="flex-1">
-        <a className="btn btn-ghost normal-case text-xl w-52 hover:bg-inherit">
+        <Link
+          to={'/'}
+          className="btn btn-ghost normal-case text-xl w-52 hover:bg-inherit"
+        >
           <img
             src={NavLog}
             alt="img logo"
           />
-        </a>
+        </Link>
       </div>
       <div className="flex-none gap-2">
         <div className="dropdown dropdown-end">
@@ -41,7 +46,15 @@ const Navbar: FC = () => {
             className="btn btn-ghost btn-circle avatar "
           >
             <div className="w-10 rounded-full border-2 border-base-100">
-              <img src="https://ui-avatars.com/api/?name=default&rounded=true" />
+              <img
+                src={
+                  !ckPP || ckPP === null || ckPP === undefined
+                    ? 'https://placehold.co/40x40/png?text=I'
+                    : ckPP
+                }
+                alt={`User's profile picture`}
+                className="h-10 w-10 border-spacing-1 rounded-full object-cover object-center"
+              />
             </div>
           </label>
           <ul
