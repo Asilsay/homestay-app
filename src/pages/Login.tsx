@@ -1,11 +1,16 @@
 import imageLogin from '../assets/login.png';
+import withReactContent from 'sweetalert2-react-content';
+import swal from 'sweetalert2';
 import NavLog from '../assets/loginreg.png';
 import { Input } from '../components/Input';
 import Layout from '../components/Layout';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import api from '../utils/api';
+import { PostLogin } from '../utils/type';
+import { useCookies } from 'react-cookie';
 
 const schema = Yup.object().shape({
   email: Yup.string().email('please enter a valid email').required('Required'),
@@ -13,6 +18,11 @@ const schema = Yup.object().shape({
 });
 
 const Login = () => {
+  const MySwal = withReactContent(swal);
+  const navigate = useNavigate();
+
+  const [, setCookie] = useCookies(['user_id', 'email', 'token']);
+
   const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
     useFormik({
       initialValues: {
@@ -21,9 +31,38 @@ const Login = () => {
       },
       validationSchema: schema,
       onSubmit: (values) => {
-        console.log(values);
+        postLogin(values);
       },
     });
+
+  const postLogin = async (code: PostLogin) => {
+    await api
+      .postLogin(code)
+      .then((response) => {
+        const { data, message } = response.data;
+        MySwal.fire({
+          title: 'Success',
+          text: message,
+          showCancelButton: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            setCookie('user_id', data.user_id, { path: '/' });
+            setCookie('email', data.email, { path: '/' });
+            setCookie('token', data.token, { path: '/' });
+            navigate(`/`);
+          }
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
 
   return (
     <Layout

@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import api from '../utils/api';
+import { PostRegis } from '../utils/type';
 
 const schema = Yup.object().shape({
   email: Yup.string().email('please enter a valid email').required('Required'),
@@ -35,11 +36,11 @@ const Register = () => {
       },
     });
 
-  const postRegis = async (code: any) => {
+  const postRegis = async (code: PostRegis) => {
     await api
       .postRegister(code)
       .then((response) => {
-        const { data, message } = response.data;
+        const { message } = response.data;
         MySwal.fire({
           title: 'Success',
           text: message,
@@ -50,12 +51,12 @@ const Register = () => {
           }
         });
       })
-      .catch((response) => {
-        const { message } = response.data;
+      .catch((error) => {
+        const { data } = error.response;
         MySwal.fire({
           icon: 'error',
           title: 'Failed',
-          text: `error :  ${message}`,
+          text: `error :  ${data.message}`,
           showCancelButton: false,
         });
       });
