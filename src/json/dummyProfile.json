@@ -1,0 +1,12 @@
+{
+  "code": 200,
+  "message": "Successful add feedback",
+  "data": [
+    {
+      "user_id": 1,
+      "username": "Petrik",
+      "user_picture": "https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8bGVuc3xlbnwwfHwwfHw%3D&w=1000&q=80",
+      "email": "email@email.com"
+    }
+  ]
+}
