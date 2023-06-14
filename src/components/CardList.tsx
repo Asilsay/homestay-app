@@ -21,14 +21,13 @@ const Card: FC<listProps> = ({
   image,
   rating,
 }) => {
-  //   const imgUrl = "https://storage.googleapis.com/alta-airbnb/";
   return (
     <div
       className="card card-side cursor-pointer bg-slate-100"
       onClick={handleDetail}
     >
       <figure>
-        <img src={hotel} alt="Hotel Room" />
+        <img src={(image = hotel)} alt="Hotel Room" />
       </figure>
       <div className="card-body px-2 py-4">
         <div className="card-title font-semibold text-[#291334] text-4xl md:text-md  mb-2">
