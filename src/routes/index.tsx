@@ -12,6 +12,7 @@ import ValidateHost from "../pages/ValidateHost";
 import Landing from "../pages/Landing";
 import Profile from "../pages/Profile";
 import EditProfile from "../pages/EditProfile";
+import Hosting from "../pages/Hosting";
 
 const Router = () => {
   return (
@@ -28,6 +29,7 @@ const Router = () => {
         <Route path="/landing" element={<Landing />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/editprofile" element={<EditProfile />} />
+        <Route path="/hosting" element={<Hosting />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
