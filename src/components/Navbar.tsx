@@ -1,7 +1,30 @@
 import { FC } from 'react';
 import NavLog from '../assets/homestay_navbar_logo.png';
 
+import { NavLink, useNavigate } from 'react-router-dom';
+import swal from '../utils/swal';
+import { useCookies } from 'react-cookie';
+import withReactContent from 'sweetalert2-react-content';
+
 const Navbar: FC = () => {
+  const [, , removeCookie] = useCookies(['user_id', 'email', 'token']);
+  const navigate = useNavigate();
+  const MySwal = withReactContent(swal);
+
+  const handleLogout = async () => {
+    MySwal.fire({
+      title: 'Logout',
+      text: 'Are you sure?',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeCookie('user_id');
+        removeCookie('email');
+        removeCookie('token');
+        navigate('/landing');
+      }
+    });
+  };
+
   return (
     <div className="navbar px-16 bg-primary sticky top-0 z-50">
       <div className="flex-1">
@@ -24,7 +47,7 @@ const Navbar: FC = () => {
           </label>
           <ul
             tabIndex={0}
-            className="mt-3 p-2 shadow menu menu-md dropdown-content bg-base-100 rounded-box w-40 gap-1"
+            className="mt-3 p-2 shadow menu menu-md dropdown-content bg-base-200 rounded-box w-40 gap-1"
           >
             <li>
               <a>Add Homestay</a>
@@ -40,7 +63,7 @@ const Navbar: FC = () => {
               <a>Profile</a>
             </li>
             <li>
-              <a>Logout</a>
+              <a onClick={() => handleLogout()}>Logout</a>
             </li>
           </ul>
         </div>
