@@ -31,7 +31,7 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
-  putUserById: (token?: string, data?: getUsers) =>
+  putUserById: (token?: string, data?: any) =>
     instance({
       method: 'PUT',
       url: `users`,

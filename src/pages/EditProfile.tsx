@@ -1,8 +1,7 @@
 import Layout from '../components/Layout';
-import { Modals } from '../components/Modals';
-import { Input, TextArea, InputFile } from '../components/Input';
+import { Input, InputFile } from '../components/Input';
 
-import { useEffect, lazy, Suspense, useState, MouseEventHandler } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useCookies } from 'react-cookie';
@@ -19,6 +18,14 @@ const schemaProfile = Yup.object().shape({
   fullname: Yup.string().min(6, 'atleat 6 character').required('Required'),
   phone: Yup.string().required('Required'),
   profile_picture: Yup.mixed().required('Image is required'),
+});
+
+const schemaPassword = Yup.object().shape({
+  old_password: Yup.string().required('Required'),
+  new_password: Yup.string().required('Required'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password')], 'password must match')
+    .required('Required'),
 });
 
 const EditProfile = () => {
@@ -65,14 +72,33 @@ const EditProfile = () => {
       profile_picture: '',
     },
     validationSchema: schemaProfile,
+    onSubmit: async (values) => {
+      await putUsers(values);
+    },
+  });
+
+  const formikPassword = useFormik({
+    initialValues: {
+      fullname: '',
+      email: '',
+      phone: '',
+      profile_picture: '',
+    },
+    validationSchema: schemaProfile,
     onSubmit: (values) => {
       putUsers(values);
     },
   });
 
-  const putUsers = async (datad: getUsers) => {
+  const putUsers = async (datad?: any) => {
+    const formData = new FormData();
+    formData.append('email', datad.email);
+    formData.append('fullname', datad.fullname);
+    formData.append('phone', datad.phone);
+    formData.append('profile_picture', datad.profile_picture);
+
     await api
-      .putUserById(ckToken, datad)
+      .putUserById(ckToken, formData)
       .then((response) => {
         const { message } = response.data;
         navigate('/profile');
@@ -83,10 +109,11 @@ const EditProfile = () => {
         });
       })
       .catch((error) => {
+        const { data } = error.response;
         MySwal.fire({
           icon: 'error',
           title: 'Failed',
-          text: `error :  ${error.message}`,
+          text: `error :  ${data.message}`,
           showCancelButton: false,
         });
       });
