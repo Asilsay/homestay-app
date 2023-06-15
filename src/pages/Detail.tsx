@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { Input } from '../components/Input';
 import { DataReserveType, DetailHomeType } from '../utils/type';
 import withReactContent from 'sweetalert2-react-content';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import swal from '../utils/swal';
 import { useCookies } from 'react-cookie';
 import api from '../utils/api';
@@ -44,6 +44,7 @@ const Detail = () => {
   const [checkReserv, setCheckReserv] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
   const [dataReserv, setDataReserv] = useState<DataReserveType>();
+  const navigate = useNavigate();
 
   const MySwal = withReactContent(swal);
   const params = useParams();
@@ -94,14 +95,14 @@ const Detail = () => {
       .then((response) => {
         const { message } = response.data;
         setDataReserv(code);
-
         MySwal.fire({
-          title: 'Success',
-          text: message,
+          title: message,
           showCancelButton: false,
         }).then((result) => {
           if (result.isConfirmed) {
-            setCheckReserv(true);
+            if (message === 'Available') {
+              setCheckReserv(true);
+            }
           }
         });
       })
@@ -126,6 +127,10 @@ const Detail = () => {
           title: 'Success',
           text: message,
           showCancelButton: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate(`/confirm/${data.reservation_id}`);
+          }
         });
       })
       .catch((error) => {
