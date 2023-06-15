@@ -34,6 +34,7 @@ export interface reservType {
   checkout_date: string;
   homestay_name: string;
   homestay_price: number;
+  amount: number;
 }
 
 export interface ConfirmType {

@@ -1,10 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC } from "react";
 
 interface FormikProps {
   id: string;
   label?: string;
   name?: string;
   value?: string | number;
+  defaultVal?: string | number;
   error?: string | boolean | undefined;
   touch?: string | boolean | undefined;
   disabled?: boolean | undefined;
@@ -19,6 +20,11 @@ interface InputProps extends FormikProps {
 interface TextAreaProps extends FormikProps {
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement>;
   onBlur?: React.FocusEventHandler<HTMLTextAreaElement>;
+}
+interface SelectProps extends FormikProps {
+  onChangeSelect?: React.ChangeEventHandler<HTMLSelectElement>;
+  onBlur?: React.FocusEventHandler<HTMLSelectElement>;
+  children: React.ReactNode;
 }
 
 export const Input: FC<InputProps> = ({
@@ -37,7 +43,7 @@ export const Input: FC<InputProps> = ({
     <div className="h-16 w-full">
       <input
         className={`input w-full bg-base-200 ${
-          error && touch ? 'input-error' : ''
+          error && touch ? "input-error" : ""
         }`}
         id={id}
         type={type}
@@ -71,7 +77,7 @@ export const InputFile: FC<InputProps> = ({
     <div className="h-16 w-full">
       <input
         className={`file-input w-full bg-base-200 ${
-          error && touch ? 'file-input-bordered file-input-error' : ''
+          error && touch ? "file-input-bordered file-input-error" : ""
         }`}
         id={id}
         type="file"
@@ -103,7 +109,7 @@ export const TextArea: FC<TextAreaProps> = ({
     <div className="h-[90px] w-full">
       <textarea
         className={`textarea w-full bg-base-200  ${
-          error && touch ? 'textarea-error' : ''
+          error && touch ? "textarea-error" : ""
         }`}
         id={id}
         name={name}
@@ -115,6 +121,43 @@ export const TextArea: FC<TextAreaProps> = ({
       <p>
         {error && touch && <span className="text-sm text-error">{error}</span>}
       </p>
+    </div>
+  );
+};
+
+export const Select: FC<SelectProps> = ({
+  id,
+  label,
+  name,
+  value,
+  error,
+  onChangeSelect,
+  onBlur,
+  touch,
+  children,
+}) => {
+  return (
+    <div>
+      <div className="h-16 w-full">
+        <select
+          className={`select w-full bg-base-200 ${
+            error && touch ? "select-error" : ""
+          }`}
+          id={id}
+          name={name}
+          value={value}
+          onChange={onChangeSelect}
+          onBlur={onBlur}
+        >
+          <option disabled>{label}</option>
+          {children}
+        </select>
+        <p>
+          {error && touch && (
+            <span className="text-sm text-error">{error}</span>
+          )}
+        </p>
+      </div>
     </div>
   );
 };
