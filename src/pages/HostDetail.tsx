@@ -28,7 +28,7 @@ const schema = Yup.object().shape({
 });
 
 const schemaImage = Yup.object().shape({
-  picture_id: Yup.mixed().required('Image is required'),
+  homestay_picture: Yup.mixed().required('Image is required'),
 });
 
 const HostDetail = () => {
@@ -50,7 +50,7 @@ const HostDetail = () => {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
     if (file) {
-      formikEditImage.setFieldValue('picture_id', file);
+      formikEditImage.setFieldValue('homestay_picture', file);
       setPreview(URL.createObjectURL(file));
     }
   };
@@ -110,15 +110,45 @@ const HostDetail = () => {
       });
   };
 
+  const PostHomestaysImage = async (datad?: any) => {
+    await api
+      .PostImage(ckToken, homestay_id, datad)
+      .then((response) => {
+        const { message } = response.data;
+        formikEditImage.resetForm();
+        fetchDetail();
+        MyToast.fire({
+          icon: 'success',
+          title: message,
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
+
+  const formDataToPut = async (datad?: any) => {
+    const formData = new FormData();
+    formData.append('homestay_picture', datad.homestay_picture);
+    await PostHomestaysImage(formData);
+  };
+
   const formikEditImage = useFormik({
     initialValues: {
-      picture_id: null,
+      homestay_picture: null,
     },
     validationSchema: schemaImage,
     onSubmit: (values) => {
-      console.log(values);
+      formDataToPut(values);
     },
   });
+
   const formikEdit = useFormik({
     initialValues: {
       name: '',
@@ -174,262 +204,257 @@ const HostDetail = () => {
 
   return (
     <Layout chose="layout">
-      <Modals id="modal-edit">
-        <form
-          onSubmit={formikEdit.handleSubmit}
-          className="flex flex-col gap-3 items-center"
-        >
-          <p className="text-secondary font-medium tracking-wide text-2xl mb-3">
-            Edit Page
-          </p>
-          <Input
-            id="name"
-            name="name"
-            label="Homestay name"
-            type="text"
-            value={formikEdit.values.name}
-            onChange={formikEdit.handleChange}
-            onBlur={formikEdit.handleBlur}
-            error={formikEdit.errors.name}
-            touch={formikEdit.touched.name}
-          />
-          <TextArea
-            id="description"
-            name="description"
-            label="Description"
-            value={formikEdit.values.description}
-            onChange={formikEdit.handleChange}
-            onBlur={formikEdit.handleBlur}
-            error={formikEdit.errors.description}
-            touch={formikEdit.touched.description}
-          />
-          <Input
-            id="address"
-            name="address"
-            label="Address"
-            type="text"
-            value={formikEdit.values.address}
-            onChange={formikEdit.handleChange}
-            onBlur={formikEdit.handleBlur}
-            error={formikEdit.errors.address}
-            touch={formikEdit.touched.address}
-          />
-          <Input
-            id="price"
-            name="price"
-            label="price"
-            type="number"
-            value={formikEdit.values.price}
-            onChange={formikEdit.handleChange}
-            onBlur={formikEdit.handleBlur}
-            error={formikEdit.errors.price}
-            touch={formikEdit.touched.price}
-          />
-          <div className="w-full flex justify-end gap-3">
-            <div className="modal-action mt-0 ">
-              <label
-                htmlFor="modal-edit"
-                className="btn btn-ghost"
-              >
-                Close
-              </label>
-              <button
-                type="submit"
-                className="btn btn-secondary w-32"
-                onClick={() => {
-                  const modalCheckbox = document.getElementById(
-                    'modal-edit'
-                  ) as HTMLInputElement;
-                  if (modalCheckbox) {
-                    modalCheckbox.checked = false;
-                  }
-                }}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </form>
-      </Modals>
-      <Modals id="modal-image-edit">
-        <form
-          onSubmit={formikEditImage.handleSubmit}
-          className="flex flex-col gap-3 items-center"
-        >
-          <p className="text-secondary font-medium tracking-wide text-2xl mb-3">
-            Edit Image
-          </p>
-          <div className="w-full h-full p-3">
-            <img
-              src={
-                preview
-                  ? preview
-                  : 'https://placehold.co/600x400/png?text=placeholder+image'
-              }
-              alt=""
-              className="w-full h-full object-center object-cover"
-            />
-          </div>
-
-          <InputFile
-            id="picture_id"
-            name="picture_id"
-            label="picture_id name"
-            onChange={handleImageChange}
-            onBlur={formikEditImage.handleBlur}
-            error={formikEditImage.errors.picture_id}
-            touch={formikEditImage.touched.picture_id}
-          />
-
-          <div className="w-full flex justify-end gap-3">
-            <div className="modal-action mt-0 ">
-              <label
-                htmlFor="modal-image-edit"
-                className="btn btn-ghost"
-              >
-                Close
-              </label>
-              <button
-                type="submit"
-                className="btn btn-secondary w-32"
-                onClick={() => {
-                  const modalCheckbox = document.getElementById(
-                    'modal-edit'
-                  ) as HTMLInputElement;
-                  if (modalCheckbox) {
-                    modalCheckbox.checked = false;
-                  }
-                }}
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-        </form>
-      </Modals>
       {load ? (
         <LoadingFull />
       ) : (
-        <Layout
-          chose="section"
-          addClass="bg-base-100 flex flex-col justify-center py-16 px-20"
-        >
-          <div className="w-full h-[500px] flex">
-            <div className="w-4/6 relative bg-cover bg-center">
+        <>
+          <Modals id="modal-edit">
+            <form
+              onSubmit={formikEdit.handleSubmit}
+              className="flex flex-col gap-3 items-center"
+            >
+              <p className="text-secondary font-medium tracking-wide text-2xl mb-3">
+                Edit Page
+              </p>
+              <Input
+                id="name"
+                name="name"
+                label="Homestay name"
+                type="text"
+                value={formikEdit.values.name}
+                onChange={formikEdit.handleChange}
+                onBlur={formikEdit.handleBlur}
+                error={formikEdit.errors.name}
+                touch={formikEdit.touched.name}
+              />
+              <TextArea
+                id="description"
+                name="description"
+                label="Description"
+                value={formikEdit.values.description}
+                onChange={formikEdit.handleChange}
+                onBlur={formikEdit.handleBlur}
+                error={formikEdit.errors.description}
+                touch={formikEdit.touched.description}
+              />
+              <Input
+                id="address"
+                name="address"
+                label="Address"
+                type="text"
+                value={formikEdit.values.address}
+                onChange={formikEdit.handleChange}
+                onBlur={formikEdit.handleBlur}
+                error={formikEdit.errors.address}
+                touch={formikEdit.touched.address}
+              />
+              <Input
+                id="price"
+                name="price"
+                label="price"
+                type="number"
+                value={formikEdit.values.price}
+                onChange={formikEdit.handleChange}
+                onBlur={formikEdit.handleBlur}
+                error={formikEdit.errors.price}
+                touch={formikEdit.touched.price}
+              />
+              <div className="w-full flex justify-end gap-3">
+                <div className="modal-action mt-0 ">
+                  <label
+                    htmlFor="modal-edit"
+                    className="btn btn-ghost"
+                  >
+                    Close
+                  </label>
+                  <button
+                    type="submit"
+                    className="btn btn-secondary w-32"
+                    onClick={() => {
+                      const modalCheckbox = document.getElementById(
+                        'modal-edit'
+                      ) as HTMLInputElement;
+                      if (modalCheckbox) {
+                        modalCheckbox.checked = false;
+                      }
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </Modals>
+          <Modals id="modal-image-edit">
+            <form
+              onSubmit={formikEditImage.handleSubmit}
+              className="flex flex-col gap-3 items-center"
+            >
+              <p className="text-secondary font-medium tracking-wide text-2xl mb-3">
+                Edit Image
+              </p>
               <div className="w-full h-full p-3">
                 <img
-                  src="https://placehold.co/600x400/png?text=placeholder+image
-              "
+                  src={
+                    preview
+                      ? preview
+                      : 'https://placehold.co/600x400/png?text=placeholder+image'
+                  }
                   alt=""
                   className="w-full h-full object-center object-cover"
                 />
               </div>
-              <label
-                htmlFor="modal-image-edit"
-                className="absolute btn btn-primary bottom-6 right-6"
-              >
-                Edit Image
-              </label>
-            </div>
-            <div className="w-2/6 flex flex-col">
-              <div className="h-1/2 w-full relative bg-cover bg-center">
-                <div className="w-full h-full p-3">
-                  <img
-                    src="https://placehold.co/600x400/png?text=placeholder+image
-                "
-                    alt=""
-                    className="w-full h-full object-center object-cover"
-                  />
-                </div>
-                <button className="absolute btn btn-primary bottom-6 right-6">
-                  Edit Image
-                </button>
-              </div>
-              <div className="h-1/2 w-full relative bg-cover bg-center">
-                <div className="w-full h-full p-3">
-                  <img
-                    src="https://placehold.co/600x400/png?text=placeholder+image
-                "
-                    alt=""
-                    className="w-full h-full object-center object-cover"
-                  />
-                </div>
-                <button className="absolute btn btn-primary bottom-6 right-6">
-                  Edit Image
-                </button>
-              </div>
-            </div>
-          </div>
 
-          <div className="w-full h-full flex">
-            <div className="w-4/6 p-3">
-              <p className="text-4xl font-semibold text-neutral uppercase">
-                {dataHome?.name}
-              </p>
-              <div className="divider"></div>
-              <p className="text-xl font-semibold text-neutral capitalize">
-                {dataHome?.description}
-              </p>
-              <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                Location:{' '}
-                <span className="font-normal">{dataHome?.address}</span>
-              </p>
-              <div className="divider"></div>
-              <div className="text-xl flex items-center font-semibold text-neutral capitalize mt-3 ">
-                <FaStar />
-                <p> &ensp;4.8 - 2 Reviews</p>
-              </div>
-              <div className="w-full p-4">
-                <Suspense
-                  fallback={
-                    <span className="loading loading-dots loading-md"></span>
-                  }
-                >
-                  <div className="grid  grid-cols-1 gap-5">
-                    {data.map((data, idx) => {
-                      return (
-                        <LazyCardReviews
-                          full_name={data.username}
-                          key={idx}
-                          rating={data.rating}
-                          review={data.review}
-                          user_picture={data.user_picture}
-                        />
-                      );
-                    })}
-                  </div>
-                </Suspense>
-              </div>
-            </div>
+              <InputFile
+                id="homestay_picture"
+                name="homestay_picture"
+                label="homestay_picture name"
+                onChange={handleImageChange}
+                onBlur={formikEditImage.handleBlur}
+                error={formikEditImage.errors.homestay_picture}
+                touch={formikEditImage.touched.homestay_picture}
+              />
 
-            <div className="w-2/6 p-3 h-full flex flex-col gap-5">
-              <div className="bg-base-300 rounded-3xl shadow-md p-5">
-                <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                  Rp{dataHome?.price ? formatedPrice(dataHome?.price) : 0}{' '}
-                  <span className="font-normal">{` `}Night</span>
-                </p>
-                <div className="divider"></div>
-                <div className="w-full flex flex-col justify-center">
+              <div className="w-full flex justify-end gap-3">
+                <div className="modal-action mt-0 ">
                   <label
-                    id="check"
-                    className="btn btn-primary mt-3"
-                    htmlFor="modal-edit"
+                    htmlFor="modal-image-edit"
+                    className="btn btn-ghost"
                   >
-                    Edit Homestay
+                    Close
                   </label>
                   <button
-                    id="check"
-                    className="btn btn-error btn-outline mt-3"
-                    type="button"
-                    onClick={() => handleDelHomestays()}
+                    type="submit"
+                    className="btn btn-secondary w-32"
                   >
-                    Delete Homestay
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </Modals>
+
+          <Layout
+            chose="section"
+            addClass="bg-base-100 flex flex-col justify-center py-16 px-20"
+          >
+            <div className="w-full h-[500px] flex">
+              <div className="w-4/6 relative bg-cover bg-center">
+                <div className="w-full h-full p-3">
+                  <img
+                    src="https://placehold.co/600x400/png?text=placeholder+image
+              "
+                    alt=""
+                    className="w-full h-full object-center object-cover"
+                  />
+                </div>
+                <label
+                  htmlFor="modal-image-edit"
+                  className="absolute btn btn-primary bottom-6 right-6"
+                >
+                  Edit Image
+                </label>
+              </div>
+              <div className="w-2/6 flex flex-col">
+                <div className="h-1/2 w-full relative bg-cover bg-center">
+                  <div className="w-full h-full p-3">
+                    <img
+                      src="https://placehold.co/600x400/png?text=placeholder+image
+                "
+                      alt=""
+                      className="w-full h-full object-center object-cover"
+                    />
+                  </div>
+                  <button className="absolute btn btn-primary bottom-6 right-6">
+                    Edit Image
+                  </button>
+                </div>
+                <div className="h-1/2 w-full relative bg-cover bg-center">
+                  <div className="w-full h-full p-3">
+                    <img
+                      src="https://placehold.co/600x400/png?text=placeholder+image
+                "
+                      alt=""
+                      className="w-full h-full object-center object-cover"
+                    />
+                  </div>
+                  <button className="absolute btn btn-primary bottom-6 right-6">
+                    Edit Image
                   </button>
                 </div>
               </div>
             </div>
-          </div>
-        </Layout>
+
+            <div className="w-full h-full flex">
+              <div className="w-4/6 p-3">
+                <p className="text-4xl font-semibold text-neutral uppercase">
+                  {dataHome?.name}
+                </p>
+                <div className="divider"></div>
+                <p className="text-xl font-semibold text-neutral capitalize">
+                  {dataHome?.description}
+                </p>
+                <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
+                  Location:{' '}
+                  <span className="font-normal">{dataHome?.address}</span>
+                </p>
+                <div className="divider"></div>
+                <div className="text-xl flex items-center font-semibold text-neutral capitalize mt-3 ">
+                  <FaStar />
+                  <p> &ensp;4.8 - 2 Reviews</p>
+                </div>
+                <div className="w-full p-4">
+                  <Suspense
+                    fallback={
+                      <span className="loading loading-dots loading-md"></span>
+                    }
+                  >
+                    <div className="grid  grid-cols-1 gap-5">
+                      {data.map((data, idx) => {
+                        return (
+                          <LazyCardReviews
+                            full_name={data.username}
+                            key={idx}
+                            rating={data.rating}
+                            review={data.review}
+                            user_picture={data.user_picture}
+                          />
+                        );
+                      })}
+                    </div>
+                  </Suspense>
+                </div>
+              </div>
+
+              <div className="w-2/6 p-3 h-full flex flex-col gap-5">
+                <div className="bg-base-300 rounded-3xl shadow-md p-5">
+                  <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
+                    Rp{dataHome?.price ? formatedPrice(dataHome?.price) : 0}{' '}
+                    <span className="font-normal">{` `}Night</span>
+                  </p>
+                  <div className="divider"></div>
+                  <div className="w-full flex flex-col justify-center">
+                    <label
+                      id="check"
+                      className="btn btn-primary mt-3"
+                      htmlFor="modal-edit"
+                    >
+                      Edit Homestay
+                    </label>
+                    <button
+                      id="check"
+                      className="btn btn-error btn-outline mt-3"
+                      type="button"
+                      onClick={() => handleDelHomestays()}
+                    >
+                      Delete Homestay
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Layout>
+        </>
       )}
     </Layout>
   );
