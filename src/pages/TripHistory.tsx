@@ -1,23 +1,23 @@
-import Layout from '../components/Layout';
-import { Modals } from '../components/Modals';
-import { data } from '../json/dummyTrip.json';
-import { lazy, Suspense } from 'react';
+import Layout from "../components/Layout";
+import { Modals } from "../components/Modals";
+import { data } from "../json/dummyTrip.json";
+import { lazy, Suspense } from "react";
 
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Input, TextArea } from '../components/Input';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Input, TextArea } from "../components/Input";
 
-const TripCard = lazy(() => import('../components/TripCard'));
+const TripCard = lazy(() => import("../components/TripCard"));
 
 const addSchema = Yup.object().shape({
-  review: Yup.string().required('Required'),
-  rating: Yup.number().positive().integer().required('Required'),
+  review: Yup.string().required("Required"),
+  rating: Yup.number().positive().integer().required("Required"),
 });
 
 const TripHistory = () => {
   const formikAdd = useFormik({
     initialValues: {
-      review: '',
+      review: "",
       rating: 0,
     },
     validationSchema: addSchema,
@@ -61,10 +61,7 @@ const TripHistory = () => {
 
           <div className="w-full flex justify-end gap-3">
             <div className="modal-action mt-0 ">
-              <label
-                htmlFor="modal-review"
-                className="btn btn-ghost"
-              >
+              <label htmlFor="modal-review" className="btn btn-ghost">
                 Close
               </label>
             </div>
@@ -72,10 +69,7 @@ const TripHistory = () => {
           </div>
         </form>
       </Modals>
-      <Layout
-        chose="section"
-        addClass="bg-base-100 flex flex-col  py-16 px-20"
-      >
+      <Layout chose="section" addClass="bg-base-100 flex flex-col  py-16 px-20">
         <p className="text-4xl font-semibold text-neutral uppercase">
           My Reservation
         </p>
@@ -92,10 +86,11 @@ const TripHistory = () => {
                     key={idx}
                     category={data.category}
                     payment_status={data.payment_status}
-                    check_in_date={data['check-in_date']}
-                    check_out_date={data['check-out_date']}
+                    check_in_date={data["check-in_date"]}
+                    check_out_date={data["check-out_date"]}
                     gross_amount={data.gross_amount}
                     price={data.price}
+                    va_number="0822232171618"
                     quantitiy={data.quantity}
                   />
                 );
