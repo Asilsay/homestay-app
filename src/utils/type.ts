@@ -21,6 +21,17 @@ export interface DetailHomeType {
   price?: number;
   total_reviews?: number;
   average_rating?: number;
+  homestay_pictures?: HomestayPicture[];
+  reviews?: Review[];
+}
+
+interface Review {
+  review?: string;
+  rating?: number;
+}
+
+interface HomestayPicture {
+  homestay_picture?: string;
 }
 
 export interface DataReserveType {

@@ -173,8 +173,11 @@ const Detail = () => {
             <div className="w-4/6 bg-cover bg-center">
               <div className="w-full h-full p-3">
                 <img
-                  src="https://placehold.co/600x400/png?text=placeholder+image
-              "
+                  src={
+                    dataHome?.homestay_pictures?.[0].homestay_picture
+                      ? dataHome?.homestay_pictures?.[0].homestay_picture
+                      : 'https://placehold.co/600x400/png?text=placehholder+image'
+                  }
                   alt=""
                   className="w-full h-full object-center object-cover"
                 />
@@ -220,7 +223,11 @@ const Detail = () => {
               <div className="divider"></div>
               <div className="text-xl flex items-center font-semibold text-neutral capitalize mt-3 ">
                 <FaStar />
-                <p> &ensp;4 - 2 Reviews</p>
+                <p>
+                  {' '}
+                  &ensp;{dataHome?.average_rating} - {dataHome?.total_reviews}{' '}
+                  Reviews
+                </p>
               </div>
               <div className="w-full p-4">
                 <Suspense
@@ -229,14 +236,16 @@ const Detail = () => {
                   }
                 >
                   <div className="grid  grid-cols-1 gap-5">
-                    {data.map((data, idx) => {
+                    {dataHome?.reviews?.map((data, idx) => {
                       return (
                         <LazyCardReviews
-                          full_name={data.username}
+                          full_name={'anonim'}
                           key={idx}
                           rating={data.rating}
                           review={data.review}
-                          user_picture={data.user_picture}
+                          user_picture={
+                            'https://ui-avatars.com/api/?name=Anonim'
+                          }
                         />
                       );
                     })}
