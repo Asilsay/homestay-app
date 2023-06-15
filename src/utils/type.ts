@@ -45,3 +45,16 @@ export interface ConfirmType {
   check_out_date?: string;
   payment_status?: string;
 }
+
+export interface ReadResevType {
+  reservation_id?: string;
+  homestay_name?: string;
+  checkin_date?: string;
+  checkout_date?: string;
+  homestay_price?: number;
+  duration?: number;
+  amount?: number;
+  bank_account?: string;
+  va_number?: string;
+  status?: string;
+}
