@@ -48,13 +48,23 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+  putUserRoleById: (token?: string, data?: any) =>
+    instance({
+      method: 'PUT',
+      url: `users/role`,
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
   // --- list homestay ---
-  getAllHomestay: (token?: string) => instance({
-    method: 'GET',
-    url: 'homestays',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Access-Control-Allow-Origin": true
-    }
-  })
+  getAllHomestay: (token?: string) =>
+    instance({
+      method: 'GET',
+      url: 'homestays',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Access-Control-Allow-Origin': true,
+      },
+    }),
 };
