@@ -36,10 +36,11 @@ const EditProfile = () => {
 
   const navigate = useNavigate();
 
-  const [cookie, setCookie, removeCookie] = useCookies([
+  const [cookie, , removeCookie] = useCookies([
     'user_id',
     'token',
     'pp',
+    'role',
   ]);
   const ckToken = cookie.token;
 
@@ -132,6 +133,8 @@ const EditProfile = () => {
       .then((response) => {
         const { message } = response.data;
 
+        removeCookie('role');
+        removeCookie('pp');
         removeCookie('user_id');
         removeCookie('token');
         navigate('/landing');

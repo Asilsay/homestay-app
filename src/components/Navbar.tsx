@@ -7,7 +7,13 @@ import { useCookies } from 'react-cookie';
 import withReactContent from 'sweetalert2-react-content';
 
 const Navbar: FC = () => {
-  const [cookie, , removeCookie] = useCookies(['user_id', 'token', 'pp']);
+  const [cookie, , removeCookie] = useCookies([
+    'user_id',
+    'token',
+    'pp',
+    'role',
+  ]);
+  const ckRole = cookie.role;
   const ckPP = cookie.pp;
   const navigate = useNavigate();
   const MySwal = withReactContent(swal);
@@ -20,6 +26,7 @@ const Navbar: FC = () => {
       if (result.isConfirmed) {
         removeCookie('user_id');
         removeCookie('token');
+        removeCookie('role');
         removeCookie('pp');
         navigate('/landing');
       }
@@ -61,16 +68,25 @@ const Navbar: FC = () => {
             tabIndex={0}
             className="mt-3 p-2 shadow menu menu-md dropdown-content bg-base-200 rounded-box w-40 gap-1"
           >
-            <li>
-              <a>Add Homestay</a>
-            </li>
-            <li>
-              <a>My Homestay</a>
-            </li>
+            {' '}
+            {ckRole === 'hoster' ? (
+              <>
+                <li>
+                  <Link to="/hosting">Add Homestay</Link>
+                </li>
+                <li>
+                  <Link to="/myhomestay">My Homestay</Link>
+                </li>
+              </>
+            ) : (
+              <li>
+                <Link to="/validate">Become Hoster</Link>
+              </li>
+            )}
+            <div className="divider my-0.5"></div>
             <li>
               <Link to="/trip">My Reservation</Link>
             </li>
-
             <li>
               <Link to="/profile">Profile</Link>
             </li>

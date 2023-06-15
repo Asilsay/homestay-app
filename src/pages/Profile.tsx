@@ -17,8 +17,9 @@ const Profile = () => {
   const MySwal = withReactContent(swal);
   const navigate = useNavigate();
 
-  const [cookie, setCookie] = useCookies(['user_id', 'token', 'pp']);
+  const [cookie, setCookie] = useCookies(['user_id', 'token', 'pp', 'role']);
   const ckToken = cookie.token;
+  const ckRole = cookie.role;
   const ckPP = cookie.pp;
 
   const fetchProfile = async () => {
@@ -29,6 +30,7 @@ const Profile = () => {
         const { data } = response.data;
         await setDataProfile(data);
         await checkPP(data.profile_picture);
+        await checkRole(data.role);
       })
       .catch((error) => {
         const { data } = error.response;
@@ -45,6 +47,11 @@ const Profile = () => {
   const checkPP = async (data: string) => {
     if (ckPP !== data && data !== undefined) {
       await setCookie('pp', data, { path: '/' });
+    }
+  };
+  const checkRole = async (data: string) => {
+    if (ckRole !== data && data !== undefined) {
+      await setCookie('role', data, { path: '/' });
     }
   };
 
@@ -101,9 +108,11 @@ const Profile = () => {
                   >
                     Edit Profile
                   </button>
+
                   <button
                     onClick={() => navigate('/validate')}
                     className="btn btn-primary w-36 text-white"
+                    disabled={ckRole === 'hoster'}
                   >
                     Become Hoster
                   </button>
