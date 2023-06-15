@@ -1,7 +1,6 @@
 import Layout from '../components/Layout';
 import { FaStar } from 'react-icons/fa';
 
-import { data } from '../json/dummyReviews.json';
 import { lazy, Suspense, useEffect, useState } from 'react';
 
 import { Input, InputFile, TextArea } from '../components/Input';

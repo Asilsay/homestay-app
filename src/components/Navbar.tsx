@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import NavLog from '../assets/homestay_navbar_logo.png';
 
 import { Link, useNavigate } from 'react-router-dom';

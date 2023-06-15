@@ -29,16 +29,8 @@ const ConfirmPay = () => {
   const params = useParams();
   const { reservation_id } = params;
 
-  const [cookie, ,] = useCookies(['token']);
+  const [cookie] = useCookies(['token']);
   const ckToken = cookie.token;
-
-  // const formDataToPost = async (datad?: any) => {
-  //   const formData = new FormData();
-  //   formData.append("bank_account", datad.bank_account);
-  //   formData.append("reservation_id", datad.reservation_id);
-  //   formData.append("amount", datad.amount);
-  //   await postPay(formData);
-  // };
 
   const dateType = (date: any) => {
     const dated: any = new Date(date);
@@ -65,7 +57,6 @@ const ConfirmPay = () => {
       .then(async (response) => {
         const { data } = response.data;
         setDataReserv(data);
-        console.log(data);
       })
       .catch((error) => {
         const { data } = error.response;

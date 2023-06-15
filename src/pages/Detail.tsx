@@ -1,7 +1,6 @@
 import Layout from '../components/Layout';
 import { FaStar } from 'react-icons/fa';
 
-import { data } from '../json/dummyReviews.json';
 import { lazy, Suspense, useState, useEffect } from 'react';
 
 import { useFormik } from 'formik';
@@ -65,7 +64,6 @@ const Detail = () => {
         checkin_date: `${values.checkin_date}T00:00:00Z`,
         checkout_date: `${values.checkout_date}T00:00:00Z`,
       };
-      await console.log(check, values);
       await PostCheck(check);
     },
   });
@@ -95,7 +93,6 @@ const Detail = () => {
       .postCheckReservation(ckToken, code)
       .then((response) => {
         const { message } = response.data;
-        console.log(response);
 
         setDataReserv(code);
         MySwal.fire({
@@ -124,7 +121,6 @@ const Detail = () => {
     await api
       .postReserv(ckToken, code)
       .then((response) => {
-        console.log(response);
         const { data, message } = response.data;
         MySwal.fire({
           title: 'Success',
