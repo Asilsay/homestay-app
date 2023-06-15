@@ -10,6 +10,9 @@ interface Props {
   checkin_date?: string;
   checkout_date?: string;
   payment_status?: string;
+  bank_account?: string;
+  va_number?: string;
+  onCLick?: React.MouseEventHandler;
 }
 
 const TripCard: FC<Props> = (props) => {
@@ -22,8 +25,21 @@ const TripCard: FC<Props> = (props) => {
     checkin_date,
     checkout_date,
     payment_status,
+    bank_account,
+    va_number,
+    onCLick,
   } = props;
   const navigate = useNavigate();
+
+  const dateType = (date: any) => {
+    const dated: any = new Date(date);
+    const formattedDate = dated.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+    return formattedDate;
+  };
 
   return (
     <div className="h-full w-full p-5 justify-between bg-gray-200 rounded-box shadow-md flex flex-row">
@@ -31,12 +47,13 @@ const TripCard: FC<Props> = (props) => {
         <p className="text-2xl text-neutral font-semibold tracking-wide mb-2">
           {homestay_name}:
         </p>
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           <div className="w-max h-max rounded-lg p-3 bg-gray-400">
-            {checkin_date}
+            {dateType(checkin_date)}
           </div>
+          <p className="font-semibold">TO</p>
           <div className="w-max h-max rounded-lg p-3 bg-gray-400">
-            {checkout_date}
+            {dateType(checkout_date)}
           </div>
         </div>
 
@@ -49,16 +66,28 @@ const TripCard: FC<Props> = (props) => {
           Total Rp{amount}
         </p>
       </div>
-      <div className="w-3/6 flex flex-col h-full justify-between items-end">
+      <div className="w-2/6 flex flex-col h-full justify-start items-start">
+        <p className="text-2xl text-neutral font-semibold tracking-wide mb-2">
+          Pay Here:
+        </p>
+        <p className="text-lg text-neutral font-normal tracking-wide p-1">
+          Bank: {bank_account}
+        </p>
+        <p className="text-lg text-neutral font-normal tracking-wide p-1">
+          Va Number: {va_number}
+        </p>
+      </div>
+      <div className="w-1/6 flex flex-col h-full justify-between items-end">
         {payment_status !== 'pending' ? (
           <>
             <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-success">
-              Status: {payment_status}
+              {payment_status}
             </p>
 
             <label
               className="btn btn-primary w-32 mt-1 text-lg text-neutral font-medium"
               htmlFor="modal-review"
+              onClick={onCLick}
             >
               Review
             </label>
@@ -67,7 +96,7 @@ const TripCard: FC<Props> = (props) => {
           <>
             <div>
               <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-error">
-                Status: {payment_status}
+                {payment_status}
               </p>
             </div>
             <button

@@ -62,7 +62,7 @@ export default {
   getAllHomestay: (token?: string) =>
     instance({
       method: 'GET',
-      url: 'homestays',
+      url: 'homestays?limit=30',
       headers: {
         Authorization: `Bearer ${token}`,
         'Access-Control-Allow-Origin': true,
@@ -138,6 +138,14 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+  getAllReservation: (token?: string) =>
+    instance({
+      method: 'GET',
+      url: 'users/reservations',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 
   // --- payment ---
 
@@ -149,6 +157,19 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+
+
+  // --- reviews ---
+  postReview: (token?: string, data?: any) =>
+    instance({
+      method: 'POST',
+      url: 'reviews',
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+
   postPayment: (token?: string, datapay?: any) => instance({
     method: 'POST',
     url: 'payments',
@@ -157,4 +178,5 @@ export default {
       Authorization: `Bearer ${token}`,
     },
   })
+
 };

@@ -1,17 +1,23 @@
 import Layout from '../components/Layout';
 import { Modals } from '../components/Modals';
 import { data } from '../json/dummyTrip.json';
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { TextArea } from '../components/Input';
 import { FaStar } from 'react-icons/fa';
+import api from '../utils/api';
+import { useCookies } from 'react-cookie';
+import withReactContent from 'sweetalert2-react-content';
+import swal from '../utils/swal';
+import { ReadResevType } from '../utils/type';
 
 const TripCard = lazy(() => import('../components/TripCard'));
 
 const addSchema = Yup.object().shape({
   review: Yup.string().required('Required'),
+  homestay_id: Yup.string().required('Required'),
   rating: Yup.number()
     .min(1, 'Rating must be at least 1')
     .max(5, 'Rating must not exceed 5')
@@ -19,21 +25,103 @@ const addSchema = Yup.object().shape({
 });
 
 const TripHistory = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [homestay, setHomestay] = useState<any>([]);
+  const [dataReserv, setDataReserv] = useState<ReadResevType[]>([]);
   const [rating, setRating] = useState(0);
+
   const handleStarClick = (value: any) => {
     setRating(value);
+  };
+  const MySwal = withReactContent(swal);
+
+  const [cookie] = useCookies(['token', 'pp', 'role']);
+  const ckToken = cookie.token;
+
+  const fetchData = async () => {
+    await api
+      .getAllHomestay(ckToken)
+      .then((response) => {
+        const { data } = response.data;
+        setHomestay(data);
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
+  const fetchReservation = async () => {
+    await api
+      .getAllReservation(ckToken)
+      .then((response) => {
+        const { data } = response.data;
+        setDataReserv(data);
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
+
+  const postReviews = async (data: any) => {
+    await api
+      .postReview(ckToken, data)
+      .then((response) => {
+        const { message } = response.data;
+        MySwal.fire({
+          title: 'Success',
+          text: message,
+          showCancelButton: false,
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
   };
 
   const formikAdd = useFormik({
     initialValues: {
       review: '',
       rating: 0,
+      homestay_id: '',
     },
     validationSchema: addSchema,
     onSubmit: (values) => {
-      console.log(values);
+      postReviews(values);
     },
   });
+
+  const handlerClick = (str?: string) => {
+    const id = getHomestays_id(str);
+    formikAdd.setFieldValue('homestay_id', id);
+  };
+
+  const getHomestays_id = (name?: string) => {
+    const dataItem = homestay.find((item: any) => item.name === name);
+    return dataItem?.homestay_id;
+  };
+
+  useEffect(() => {
+    fetchReservation();
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Layout chose="layout">
@@ -105,17 +193,21 @@ const TripHistory = () => {
             fallback={<span className="loading loading-dots loading-md"></span>}
           >
             <div className="grid grid-cols-1 gap-5">
-              {data.map((data, idx) => {
+              {dataReserv.map((data, idx) => {
                 return (
                   <TripCard
                     key={idx}
-                    homestay_name={data.category}
-                    payment_status={data.payment_status}
-                    checkin_date={data['check-in_date']}
-                    checkout_date={data['check-out_date']}
-                    amount={data.gross_amount}
-                    homestay_price={data.price}
-                    duration={data.quantity}
+                    homestay_name={data.homestay_name}
+                    payment_status={data.status}
+                    checkin_date={data.checkin_date}
+                    checkout_date={data.checkout_date}
+                    amount={data.amount}
+                    homestay_price={data.homestay_price}
+                    duration={data.duration}
+                    bank_account={data.bank_account}
+                    va_number={data.va_number}
+                    reservation_id={data.reservation_id}
+                    onCLick={() => handlerClick(data.homestay_name)}
                   />
                 );
               })}
