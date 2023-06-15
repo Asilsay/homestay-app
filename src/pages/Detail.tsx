@@ -94,6 +94,7 @@ const Detail = () => {
       .postCheckReservation(ckToken, code)
       .then((response) => {
         const { message } = response.data;
+        console.log(response);
         setDataReserv(code);
         MySwal.fire({
           title: message,
@@ -122,7 +123,6 @@ const Detail = () => {
       .postReserv(ckToken, code)
       .then((response) => {
         const { data, message } = response.data;
-        console.log(data);
         MySwal.fire({
           title: 'Success',
           text: message,

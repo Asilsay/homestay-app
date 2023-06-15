@@ -28,3 +28,20 @@ export interface DataReserveType {
   checkin_date?: string;
   checkout_date?: string;
 }
+
+export interface reservType {
+  checkin_date: string;
+  checkout_date: string;
+  homestay_name: string;
+  homestay_price: number;
+}
+
+export interface ConfirmType {
+  category?: string;
+  price?: number;
+  quantitiy?: number;
+  gross_amount?: number;
+  check_in_date?: string;
+  check_out_date?: string;
+  payment_status?: string;
+}
