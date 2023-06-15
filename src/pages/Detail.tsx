@@ -62,9 +62,10 @@ const Detail = () => {
     onSubmit: async (values) => {
       const check = {
         homestay_id: homestay_id,
-        checkin_date: values.checkin_date,
-        checkout_date: values.checkout_date,
+        checkin_date: `${values.checkin_date}T00:00:00Z`,
+        checkout_date: `${values.checkout_date}T00:00:00Z`,
       };
+      await console.log(check, values);
       await PostCheck(check);
     },
   });
@@ -95,6 +96,7 @@ const Detail = () => {
       .then((response) => {
         const { message } = response.data;
         console.log(response);
+
         setDataReserv(code);
         MySwal.fire({
           title: message,
@@ -122,6 +124,7 @@ const Detail = () => {
     await api
       .postReserv(ckToken, code)
       .then((response) => {
+        console.log(response);
         const { data, message } = response.data;
         MySwal.fire({
           title: 'Success',
@@ -264,7 +267,7 @@ const Detail = () => {
                       id="checkin_date"
                       name="checkin_date"
                       label="type your Start Date here"
-                      type="Date"
+                      type="date"
                       value={formikDate.values.checkin_date}
                       onChange={formikDate.handleChange}
                       onBlur={formikDate.handleBlur}
@@ -284,7 +287,7 @@ const Detail = () => {
                       id="checkout_date"
                       name="checkout_date"
                       label="type your End Date here"
-                      type="Date"
+                      type="date"
                       value={formikDate.values.checkout_date}
                       onChange={formikDate.handleChange}
                       onBlur={formikDate.handleBlur}

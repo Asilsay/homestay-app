@@ -1,72 +1,82 @@
-import { FC } from "react";
+import { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
-  category?: string;
-  price?: number;
-  quantitiy?: number;
-  gross_amount?: number;
-  check_in_date?: string;
-  check_out_date?: string;
+  reservation_id?: string;
+  homestay_price?: number;
+  homestay_name?: string;
+  duration?: number;
+  amount?: number;
+  checkin_date?: string;
+  checkout_date?: string;
   payment_status?: string;
-  va_number?: string;
 }
+
 const TripCard: FC<Props> = (props) => {
   const {
-    category,
-    price,
-    quantitiy,
-    gross_amount,
-    check_in_date,
-    check_out_date,
+    reservation_id,
+    homestay_name,
+    homestay_price,
+    duration,
+    amount,
+    checkin_date,
+    checkout_date,
     payment_status,
-    va_number,
   } = props;
+  const navigate = useNavigate();
 
   return (
     <div className="h-full w-full p-5 justify-between bg-gray-200 rounded-box shadow-md flex flex-row">
       <div className="w-3/6">
         <p className="text-2xl text-neutral font-semibold tracking-wide mb-2">
-          {category}:
+          {homestay_name}:
         </p>
         <div className="flex gap-3">
           <div className="w-max h-max rounded-lg p-3 bg-gray-400">
-            {check_in_date}
+            {checkin_date}
           </div>
           <div className="w-max h-max rounded-lg p-3 bg-gray-400">
-            {check_out_date}
+            {checkout_date}
           </div>
         </div>
 
         <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-          VA NUMBER : {va_number}
-        </p>
-        <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-          Rp{price} x {quantitiy}{" "}
+          Rp{homestay_price} x {duration}{' '}
           <span className="font-normal">{` `}Night</span>
         </p>
         <div className="divider w-96 my-1"></div>
         <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-          Total Rp{gross_amount}
+          Total Rp{amount}
         </p>
       </div>
       <div className="w-3/6 flex flex-col h-full justify-between items-end">
-        {payment_status !== "pending" ? (
+        {payment_status !== 'pending' ? (
           <>
             <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-success">
               Status: {payment_status}
             </p>
-            <p className="mt-1 text-lg text-neutral font-medium">
-              <label className="btn btn-primary w-32" htmlFor="modal-review">
-                Review
-              </label>
-            </p>
+
+            <label
+              className="btn btn-primary w-32 mt-1 text-lg text-neutral font-medium"
+              htmlFor="modal-review"
+            >
+              Review
+            </label>
           </>
         ) : (
-          <div>
-            <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-error">
-              Status: {payment_status}
-            </p>
-          </div>
+          <>
+            <div>
+              <p className="text-lg text-neutral font-normal tracking-wide p-4 badge badge-error">
+                Status: {payment_status}
+              </p>
+            </div>
+            <button
+              className="btn btn-warning w-32 mt-1 text-lg text-neutral font-medium"
+              onClick={() => navigate(`/confirm/${reservation_id}`)}
+            >
+              PAY HERE
+            </button>
+          </>
         )}
       </div>
     </div>

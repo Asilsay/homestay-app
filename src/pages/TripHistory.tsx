@@ -1,23 +1,32 @@
-import Layout from "../components/Layout";
-import { Modals } from "../components/Modals";
-import { data } from "../json/dummyTrip.json";
-import { lazy, Suspense } from "react";
+import Layout from '../components/Layout';
+import { Modals } from '../components/Modals';
+import { data } from '../json/dummyTrip.json';
+import { lazy, Suspense, useState } from 'react';
 
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { Input, TextArea } from "../components/Input";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { TextArea } from '../components/Input';
+import { FaStar } from 'react-icons/fa';
 
-const TripCard = lazy(() => import("../components/TripCard"));
+const TripCard = lazy(() => import('../components/TripCard'));
 
 const addSchema = Yup.object().shape({
-  review: Yup.string().required("Required"),
-  rating: Yup.number().positive().integer().required("Required"),
+  review: Yup.string().required('Required'),
+  rating: Yup.number()
+    .min(1, 'Rating must be at least 1')
+    .max(5, 'Rating must not exceed 5')
+    .required('Required'),
 });
 
 const TripHistory = () => {
+  const [rating, setRating] = useState(0);
+  const handleStarClick = (value: any) => {
+    setRating(value);
+  };
+
   const formikAdd = useFormik({
     initialValues: {
-      review: "",
+      review: '',
       rating: 0,
     },
     validationSchema: addSchema,
@@ -34,7 +43,7 @@ const TripHistory = () => {
           className="flex flex-col gap-5 items-center"
         >
           <p className="text-primary font-medium tracking-wide text-2xl mb-3">
-            Add Log
+            Add Review
           </p>
           <TextArea
             id="review"
@@ -47,21 +56,34 @@ const TripHistory = () => {
             touch={formikAdd.touched.review}
           />
 
-          <Input
-            id="rating"
-            name="rating"
-            label="Rating"
-            type="number"
-            value={formikAdd.values.rating}
-            onChange={formikAdd.handleChange}
-            onBlur={formikAdd.handleBlur}
-            error={formikAdd.errors.rating}
-            touch={formikAdd.touched.rating}
-          />
-
+          <div className="flex items-center">
+            {[1, 2, 3, 4, 5].map((value) => (
+              <button
+                key={value}
+                className={`mr-1 ${
+                  rating >= value ? 'text-warning' : 'text-base-300'
+                }`}
+                onClick={() => {
+                  handleStarClick(value);
+                  formikAdd.setFieldValue('rating', value);
+                  formikAdd.setFieldTouched('rating', true);
+                }}
+                type="button"
+              >
+                <FaStar />
+              </button>
+            ))}
+            <span>{rating}</span>
+          </div>
+          {formikAdd.touched.rating && formikAdd.errors.rating && (
+            <div className="text-error">{formikAdd.errors.rating}</div>
+          )}
           <div className="w-full flex justify-end gap-3">
             <div className="modal-action mt-0 ">
-              <label htmlFor="modal-review" className="btn btn-ghost">
+              <label
+                htmlFor="modal-review"
+                className="btn btn-ghost"
+              >
                 Close
               </label>
             </div>
@@ -69,7 +91,10 @@ const TripHistory = () => {
           </div>
         </form>
       </Modals>
-      <Layout chose="section" addClass="bg-base-100 flex flex-col  py-16 px-20">
+      <Layout
+        chose="section"
+        addClass="bg-base-100 flex flex-col  py-16 px-20"
+      >
         <p className="text-4xl font-semibold text-neutral uppercase">
           My Reservation
         </p>
@@ -84,14 +109,13 @@ const TripHistory = () => {
                 return (
                   <TripCard
                     key={idx}
-                    category={data.category}
+                    homestay_name={data.category}
                     payment_status={data.payment_status}
-                    check_in_date={data["check-in_date"]}
-                    check_out_date={data["check-out_date"]}
-                    gross_amount={data.gross_amount}
-                    price={data.price}
-                    va_number="0822232171618"
-                    quantitiy={data.quantity}
+                    checkin_date={data['check-in_date']}
+                    checkout_date={data['check-out_date']}
+                    amount={data.gross_amount}
+                    homestay_price={data.price}
+                    duration={data.quantity}
                   />
                 );
               })}
