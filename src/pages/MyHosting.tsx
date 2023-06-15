@@ -1,19 +1,20 @@
-import Layout from '../components/Layout';
-import Card from '../components/CardList';
-import LoadingFull from '../components/LoadingFull';
-import hotel from '../assets/Untitled.jpg';
+import Layout from "../components/Layout";
+import Card from "../components/CardList";
+import LoadingFull from "../components/LoadingFull";
+import hotel from "../assets/Untitled.jpg";
 
-import swal from '../utils/swal';
-import { useCookies } from 'react-cookie';
-import { useEffect, useState } from 'react';
+import swal from "../utils/swal";
+import { useCookies } from "react-cookie";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MyHosting = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [myHosting, setMyHosting] = useState<any>([]);
-  const [cookie, setCookie] = useCookies(['token', 'pp', 'role']);
+  const [cookie, setCookie] = useCookies(["token", "pp", "role"]);
   const ckToken = cookie.token;
   const ckPP = cookie.pp;
-
+  const navigate = useNavigate();
   return (
     <Layout chose="layout">
       <Layout
@@ -29,6 +30,7 @@ const MyHosting = () => {
             <button
               type="button"
               className="btn btn-primary w-auto text-white"
+              onClick={() => navigate("/hosting")}
             >
               Add Hosting
             </button>
@@ -37,33 +39,33 @@ const MyHosting = () => {
             <Card
               id={69}
               image={hotel}
-              title={'Hostingku A8'}
+              title={"Hostingku A8"}
               price={`Rp.6666666`}
-              description={'kolam renang 3 buah'}
+              description={"kolam renang 3 buah"}
               rating={4.5}
             />
             <Card
               id={69}
               image={hotel}
-              title={'Hostingku A9'}
+              title={"Hostingku A9"}
               price={`Rp.6666666`}
-              description={'kolam renang 3 buah'}
+              description={"kolam renang 3 buah"}
               rating={4.5}
             />
             <Card
               id={69}
               image={hotel}
-              title={'Hostingku 10'}
+              title={"Hostingku 10"}
               price={`Rp.6666666`}
-              description={'kolam renang 3 buah'}
+              description={"kolam renang 3 buah"}
               rating={4.5}
             />
             <Card
               id={69}
               image={hotel}
-              title={'Hostingku A11'}
+              title={"Hostingku A11"}
               price={`Rp.6666666`}
-              description={'kolam renang 3 buah'}
+              description={"kolam renang 3 buah"}
               rating={4.5}
             />
           </div>
