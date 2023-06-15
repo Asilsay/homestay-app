@@ -1,7 +1,7 @@
 import Layout from "../components/Layout";
 import withReactContent from "sweetalert2-react-content";
 import swal from "../utils/swal";
-import CardList from "../components/CardList";
+import Card from "../components/CardList";
 import { useCookies } from "react-cookie";
 import api from "../utils/api";
 import { useEffect, useState } from "react";
@@ -71,7 +71,7 @@ const HomePage = () => {
           ) : (
             <div className="flex flex-col justify-center mt-10 gap-3 mb-10 p-3">
               {homestay?.data?.map((item: any) => (
-                <CardList
+                <Card
                   key={item.id}
                   id={item.homestay_id}
                   image={
