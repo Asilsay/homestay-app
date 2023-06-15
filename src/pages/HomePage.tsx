@@ -71,11 +71,11 @@ const HomePage = () => {
                 <CardList
                   key={item.id}
                   id={item.homestay_id}
-                  image={item.homestay_pictures}
+                  image={item.homestay_pictures[0].homestay_picture}
                   title={item.name}
                   price={`Rp.${item.price}`}
                   description={item.description}
-                  rating={item.rating}
+                  rating={item.average_rating}
                 />
               ))}
             </div>

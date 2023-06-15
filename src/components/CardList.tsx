@@ -30,10 +30,13 @@ const Card: FC<listProps> = ({
       className="card card-side cursor-pointer bg-slate-100"
       onClick={onClickDetail}
     >
-      <figure>
-        <img src={image} alt="Hotel Room" />
-      </figure>
-      <div className="card-body px-2 py-4">
+      <div className="card-body w-1/2">
+        <figure>
+          <img className="w-full h-full" src={image} alt="Hotel Room" />
+        </figure>
+      </div>
+
+      <div className="card-body px-2 py-4 w-1/2">
         <div className="card-title font-semibold text-[#291334] text-4xl md:text-md  mb-2">
           {title}
         </div>
