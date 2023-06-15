@@ -11,7 +11,6 @@ const HomePage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [homestay, setHomestay] = useState<any>([]);
   const MySwal = withReactContent(swal);
-
   const [cookie, setCookie] = useCookies(["token", "pp"]);
   const ckToken = cookie.token;
   const ckPP = cookie.pp;
@@ -68,12 +67,12 @@ const HomePage = () => {
             <LoadingFull />
           ) : (
             <div className="flex flex-wrap justify-center mt-10 gap-3 mb-10 p-3">
-              {homestay?.data?.map((item: any, index: number) => (
+              {homestay?.data?.map((item: any) => (
                 <CardList
-                  key={index}
-                  id={index}
-                  image={item.image}
-                  title={item.title}
+                  key={item.id}
+                  id={item.homestay_id}
+                  image={item.homestay_pictures}
+                  title={item.name}
                   price={`Rp.${item.price}`}
                   description={item.description}
                   rating={item.rating}

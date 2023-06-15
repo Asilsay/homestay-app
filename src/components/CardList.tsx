@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { AiTwotoneStar } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 interface listProps {
   id: number;
@@ -9,21 +10,25 @@ interface listProps {
   rating?: number;
   description?: string;
   image?: string;
-  handleDetail?: React.MouseEventHandler;
 }
 
 const Card: FC<listProps> = ({
+  id,
   title,
   price,
   description,
-  handleDetail,
   image,
   rating,
 }) => {
+  const navigate = useNavigate();
+
+  function onClickDetail() {
+    navigate(`/homestays/${id}`);
+  }
   return (
     <div
       className="card card-side cursor-pointer bg-slate-100"
-      onClick={handleDetail}
+      onClick={onClickDetail}
     >
       <figure>
         <img src={image} alt="Hotel Room" />
