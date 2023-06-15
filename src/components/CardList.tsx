@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { AiTwotoneStar } from 'react-icons/ai';
 import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 

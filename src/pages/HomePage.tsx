@@ -42,9 +42,13 @@ const HomePage = () => {
       setLoading(true);
       const response = await api.getAllHomestay(ckToken);
       setHomestay(response.data);
-      console.log('response = ', response.data);
     } catch (error) {
-      console.log('error = ', error);
+      MySwal.fire({
+        icon: 'error',
+        title: 'Failed',
+        text: `error :  ${error}`,
+        showCancelButton: false,
+      });
     } finally {
       setLoading(false);
     }

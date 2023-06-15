@@ -1,6 +1,5 @@
 import Layout from '../components/Layout';
 import { Modals } from '../components/Modals';
-import { data } from '../json/dummyTrip.json';
 import { lazy, Suspense, useEffect, useState } from 'react';
 
 import { useFormik } from 'formik';

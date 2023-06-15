@@ -1,7 +1,6 @@
 import Layout from '../components/Layout';
 import { FaStar } from 'react-icons/fa';
 
-import { data } from '../json/dummyReviews.json';
 import { lazy, Suspense, useState, useEffect } from 'react';
 
 import { useFormik } from 'formik';
@@ -65,7 +64,6 @@ const Detail = () => {
         checkin_date: `${values.checkin_date}T00:00:00Z`,
         checkout_date: `${values.checkout_date}T00:00:00Z`,
       };
-      await console.log(check, values);
       await PostCheck(check);
     },
   });
@@ -95,7 +93,6 @@ const Detail = () => {
       .postCheckReservation(ckToken, code)
       .then((response) => {
         const { message } = response.data;
-        console.log(response);
 
         setDataReserv(code);
         MySwal.fire({
@@ -124,7 +121,6 @@ const Detail = () => {
     await api
       .postReserv(ckToken, code)
       .then((response) => {
-        console.log(response);
         const { data, message } = response.data;
         MySwal.fire({
           title: 'Success',
@@ -173,8 +169,11 @@ const Detail = () => {
             <div className="w-4/6 bg-cover bg-center">
               <div className="w-full h-full p-3">
                 <img
-                  src="https://placehold.co/600x400/png?text=placeholder+image
-              "
+                  src={
+                    dataHome?.homestay_pictures?.[0].homestay_picture
+                      ? dataHome?.homestay_pictures?.[0].homestay_picture
+                      : 'https://placehold.co/600x400/png?text=placehholder+image'
+                  }
                   alt=""
                   className="w-full h-full object-center object-cover"
                 />
@@ -220,7 +219,11 @@ const Detail = () => {
               <div className="divider"></div>
               <div className="text-xl flex items-center font-semibold text-neutral capitalize mt-3 ">
                 <FaStar />
-                <p> &ensp;4 - 2 Reviews</p>
+                <p>
+                  {' '}
+                  &ensp;{dataHome?.average_rating} - {dataHome?.total_reviews}{' '}
+                  Reviews
+                </p>
               </div>
               <div className="w-full p-4">
                 <Suspense
@@ -229,14 +232,16 @@ const Detail = () => {
                   }
                 >
                   <div className="grid  grid-cols-1 gap-5">
-                    {data.map((data, idx) => {
+                    {dataHome?.reviews?.map((data, idx) => {
                       return (
                         <LazyCardReviews
-                          full_name={data.username}
+                          full_name={'anonim'}
                           key={idx}
                           rating={data.rating}
                           review={data.review}
-                          user_picture={data.user_picture}
+                          user_picture={
+                            'https://ui-avatars.com/api/?name=Anonim'
+                          }
                         />
                       );
                     })}

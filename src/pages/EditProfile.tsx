@@ -104,7 +104,6 @@ const EditProfile = () => {
   };
 
   const putUsers = async (datad?: any) => {
-    await console.log(datad);
     await api
       .putUserById(ckToken, datad)
       .then((response) => {

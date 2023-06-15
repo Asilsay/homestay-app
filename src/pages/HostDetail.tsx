@@ -1,7 +1,6 @@
 import Layout from '../components/Layout';
 import { FaStar } from 'react-icons/fa';
 
-import { data } from '../json/dummyReviews.json';
 import { lazy, Suspense, useEffect, useState } from 'react';
 
 import { Input, InputFile, TextArea } from '../components/Input';
@@ -62,6 +61,7 @@ const HostDetail = () => {
       .then(async (response) => {
         const { data } = response.data;
         setDataHome(data);
+        console.log(data);
         formikEdit.setFieldValue('name', data.name);
         formikEdit.setFieldValue('description', data.description);
         formikEdit.setFieldValue('address', data.address);
@@ -342,8 +342,11 @@ const HostDetail = () => {
               <div className="w-4/6 relative bg-cover bg-center">
                 <div className="w-full h-full p-3">
                   <img
-                    src="https://placehold.co/600x400/png?text=placeholder+image
-              "
+                    src={
+                      dataHome?.homestay_pictures?.[0].homestay_picture
+                        ? dataHome?.homestay_pictures?.[0].homestay_picture
+                        : 'https://placehold.co/600x400/png?text=placehholder+image'
+                    }
                     alt=""
                     className="w-full h-full object-center object-cover"
                   />
@@ -352,7 +355,7 @@ const HostDetail = () => {
                   htmlFor="modal-image-edit"
                   className="absolute btn btn-primary bottom-6 right-6"
                 >
-                  Edit Image
+                  Add Image
                 </label>
               </div>
               <div className="w-2/6 flex flex-col">
@@ -365,9 +368,6 @@ const HostDetail = () => {
                       className="w-full h-full object-center object-cover"
                     />
                   </div>
-                  <button className="absolute btn btn-primary bottom-6 right-6">
-                    Edit Image
-                  </button>
                 </div>
                 <div className="h-1/2 w-full relative bg-cover bg-center">
                   <div className="w-full h-full p-3">
@@ -378,9 +378,6 @@ const HostDetail = () => {
                       className="w-full h-full object-center object-cover"
                     />
                   </div>
-                  <button className="absolute btn btn-primary bottom-6 right-6">
-                    Edit Image
-                  </button>
                 </div>
               </div>
             </div>
@@ -401,7 +398,11 @@ const HostDetail = () => {
                 <div className="divider"></div>
                 <div className="text-xl flex items-center font-semibold text-neutral capitalize mt-3 ">
                   <FaStar />
-                  <p> &ensp;4.8 - 2 Reviews</p>
+                  <p>
+                    {' '}
+                    &ensp;{dataHome?.average_rating} - {dataHome?.total_reviews}{' '}
+                    Reviews
+                  </p>
                 </div>
                 <div className="w-full p-4">
                   <Suspense
@@ -410,14 +411,16 @@ const HostDetail = () => {
                     }
                   >
                     <div className="grid  grid-cols-1 gap-5">
-                      {data.map((data, idx) => {
+                      {dataHome?.reviews?.map((data, idx) => {
                         return (
                           <LazyCardReviews
-                            full_name={data.username}
+                            full_name={'anonim'}
                             key={idx}
                             rating={data.rating}
                             review={data.review}
-                            user_picture={data.user_picture}
+                            user_picture={
+                              'https://ui-avatars.com/api/?name=Anonim'
+                            }
                           />
                         );
                       })}
