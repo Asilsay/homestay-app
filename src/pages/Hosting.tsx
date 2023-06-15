@@ -110,9 +110,9 @@ const Hosting = () => {
               />
               <br />
               <InputFile
-                id="picture_id"
-                name="picture_id"
-                label="picture_id name"
+                id="homestay picture"
+                name="homestay picture"
+                label="homestay picture"
                 onChange={handleImageChange}
                 onBlur={formik.handleBlur}
                 error={formik.errors.homestay_picture}
