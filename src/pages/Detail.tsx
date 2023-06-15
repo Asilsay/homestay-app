@@ -7,9 +7,9 @@ import { lazy, Suspense, useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../components/Input';
-import { DetailHomeType } from '../utils/type';
+import { DataReserveType, DetailHomeType } from '../utils/type';
 import withReactContent from 'sweetalert2-react-content';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import swal from '../utils/swal';
 import { useCookies } from 'react-cookie';
 import api from '../utils/api';
@@ -18,14 +18,33 @@ import LoadingFull from '../components/LoadingFull';
 const LazyCardReviews = lazy(() => import('../components/Card'));
 
 const schemaReservasi = Yup.object().shape({
-  start_date: Yup.string().required('Required'),
-  end_date: Yup.string().required('Required'),
+  checkin_date: Yup.date()
+    .min(
+      new Date(new Date().setDate(new Date().getDate() - 1)),
+      'Start date cannot be before today'
+    )
+    .required('Start date is required'),
+  checkout_date: Yup.date()
+    .min(Yup.ref('checkin_date'), 'End date must be after start date')
+    .test(
+      'is-after-checkin',
+      'End date must be at least one day after start date',
+      function (value) {
+        const checkinDate: any = this.resolve(Yup.ref('checkin_date'));
+        const minimumCheckoutDate = new Date(checkinDate);
+        minimumCheckoutDate.setDate(checkinDate.getDate() + 1);
+        return !checkinDate || !value || value >= minimumCheckoutDate;
+      }
+    )
+    .required('Check-out date is required'),
 });
 
 const Detail = () => {
   const [dataHome, setDataHome] = useState<DetailHomeType>();
+  const [checkReserv, setCheckReserv] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
-  const [Days, setDays] = useState<number>();
+  const [dataReserv, setDataReserv] = useState<DataReserveType>();
+  const navigate = useNavigate();
 
   const MySwal = withReactContent(swal);
   const params = useParams();
@@ -34,27 +53,21 @@ const Detail = () => {
   const [cookie] = useCookies(['token']);
   const ckToken = cookie.token;
 
-  const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
-    useFormik({
-      initialValues: {
-        start_date: '',
-        end_date: '',
-      },
-      validationSchema: schemaReservasi,
-      onSubmit: (values) => {
-        const dayss = calculateDays(values.start_date, values.end_date);
-        setDays(dayss);
-        console.log(values);
-      },
-    });
-
-  const calculateDays = (start: string, end: string): number => {
-    const startDateObj = new Date(start);
-    const endDateObj = new Date(end);
-    const timeDiff = Math.abs(endDateObj.getTime() - startDateObj.getTime());
-    const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    return days;
-  };
+  const formikDate = useFormik({
+    initialValues: {
+      checkin_date: '',
+      checkout_date: '',
+    },
+    validationSchema: schemaReservasi,
+    onSubmit: async (values) => {
+      const check = {
+        homestay_id: homestay_id,
+        checkin_date: values.checkin_date,
+        checkout_date: values.checkout_date,
+      };
+      await PostCheck(check);
+    },
+  });
 
   const fetchDetail = async () => {
     setLoad(true);
@@ -74,6 +87,61 @@ const Detail = () => {
         });
       })
       .finally(() => setLoad(false));
+  };
+
+  const PostCheck = async (code: any) => {
+    await api
+      .postCheckReservation(ckToken, code)
+      .then((response) => {
+        const { message } = response.data;
+        setDataReserv(code);
+        MySwal.fire({
+          title: message,
+          showCancelButton: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (message === 'Available') {
+              setCheckReserv(true);
+            }
+          }
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
+
+  const PostReserv = async (code: any) => {
+    await api
+      .postReserv(ckToken, code)
+      .then((response) => {
+        const { data, message } = response.data;
+        console.log(data);
+        MySwal.fire({
+          title: 'Success',
+          text: message,
+          showCancelButton: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate(`/confirm/${data.reservation_id}`);
+          }
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
   };
 
   const formatedPrice = (n: number) => {
@@ -182,67 +250,82 @@ const Detail = () => {
                 </p>
                 <div className="divider"></div>
                 <form
-                  onSubmit={handleSubmit}
+                  onSubmit={formikDate.handleSubmit}
                   className="w-full flex flex-col justify-center"
                 >
                   <div className="w-full">
                     <label
-                      htmlFor="start_date"
+                      htmlFor="checkin_date"
                       className="label"
                     >
                       <p className="label-text">Start Date: </p>
                     </label>
                     <Input
-                      id="start_date"
-                      name="start_date"
+                      id="checkin_date"
+                      name="checkin_date"
                       label="type your Start Date here"
                       type="Date"
-                      value={values.start_date}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={errors.start_date}
-                      touch={touched.start_date}
+                      value={formikDate.values.checkin_date}
+                      onChange={formikDate.handleChange}
+                      onBlur={formikDate.handleBlur}
+                      error={formikDate.errors.checkin_date}
+                      touch={formikDate.touched.checkin_date}
+                      disabled={checkReserv}
                     />
                   </div>
                   <div className="w-full">
                     <label
-                      htmlFor="end_date"
+                      htmlFor="checkout_date"
                       className="label"
                     >
                       <p className="label-text">End Date: </p>
                     </label>
                     <Input
-                      id="end_date"
-                      name="end_date"
+                      id="checkout_date"
+                      name="checkout_date"
                       label="type your End Date here"
                       type="Date"
-                      value={values.end_date}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={errors.end_date}
-                      touch={touched.end_date}
+                      value={formikDate.values.checkout_date}
+                      onChange={formikDate.handleChange}
+                      onBlur={formikDate.handleBlur}
+                      error={formikDate.errors.checkout_date}
+                      touch={formikDate.touched.checkout_date}
+                      disabled={checkReserv}
                     />
                   </div>
-
-                  <button
-                    id="check"
-                    className="btn btn-primary mt-3"
-                    type="submit"
-                  >
-                    Check availability
-                  </button>
+                  {!checkReserv ? (
+                    <button
+                      id="check"
+                      className="btn btn-primary mt-3"
+                      type="submit"
+                    >
+                      Check availability
+                    </button>
+                  ) : (
+                    <></>
+                  )}
                 </form>
               </div>
-              <div className="bg-base-300 rounded-3xl shadow-md p-5">
-                <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                  Rp400000 x {Days}{' '}
-                  <span className="font-normal">{` `}Night</span>
-                </p>
-                <div className="divider"></div>
-                <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                  Rp{Days ? Days * 400000 : 0}
-                </p>
-              </div>
+              {checkReserv ? (
+                <div className="bg-base-300 rounded-3xl shadow-md p-5 flex gap-3 justify-center">
+                  <button
+                    id="check"
+                    className="btn btn-primary btn-outline mt-3 w-[45%]"
+                    onClick={() => setCheckReserv(false)}
+                  >
+                    Back
+                  </button>
+                  <button
+                    id="check"
+                    className="btn btn-primary mt-3 w-[45%]"
+                    onClick={() => PostReserv(dataReserv)}
+                  >
+                    Make Reservation
+                  </button>
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
         </Layout>

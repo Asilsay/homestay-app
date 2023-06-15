@@ -105,4 +105,25 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+
+  // --- list Reservation ---
+
+  postCheckReservation: (token?: string, data?: any) =>
+    instance({
+      method: 'POST',
+      url: 'reservations/availability',
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+  postReserv: (token?: string, data?: any) =>
+    instance({
+      method: 'POST',
+      url: 'reservations',
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 };

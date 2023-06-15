@@ -7,6 +7,7 @@ interface FormikProps {
   value?: string | number;
   error?: string | boolean | undefined;
   touch?: string | boolean | undefined;
+  disabled?: boolean | undefined;
 }
 
 interface InputProps extends FormikProps {
@@ -30,6 +31,7 @@ export const Input: FC<InputProps> = ({
   onChange,
   onBlur,
   touch,
+  disabled,
 }) => {
   return (
     <div className="h-16 w-full">
@@ -44,6 +46,7 @@ export const Input: FC<InputProps> = ({
         onChange={onChange}
         placeholder={label}
         onBlur={onBlur}
+        disabled={disabled}
       />
 
       {error && touch && (
