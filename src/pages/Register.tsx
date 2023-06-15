@@ -1,21 +1,21 @@
-import imageReg from '../assets/register.png';
-import withReactContent from 'sweetalert2-react-content';
-import swal from '../utils/swal';
-import NavLog from '../assets/loginreg.png';
-import { Input } from '../components/Input';
-import Layout from '../components/Layout';
+import imageReg from "../assets/register.png";
+import withReactContent from "sweetalert2-react-content";
+import swal from "../utils/swal";
+import NavLog from "../assets/loginreg.png";
+import { Input } from "../components/Input";
+import Layout from "../components/Layout";
 
-import { Link, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import api from '../utils/api';
-import { PostRegis } from '../utils/type';
+import { Link, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import api from "../utils/api";
+import { PostRegis } from "../utils/type";
 
 const schema = Yup.object().shape({
-  email: Yup.string().email('please enter a valid email').required('Required'),
-  fullname: Yup.string().min(6, 'atleat 6 character').required('Required'),
-  password: Yup.string().required('Required'),
-  phone: Yup.string().required('Required'),
+  email: Yup.string().email("please enter a valid email").required("Required"),
+  fullname: Yup.string().min(6, "atleat 6 character").required("Required"),
+  password: Yup.string().required("Required"),
+  phone: Yup.string().required("Required"),
 });
 
 const Register = () => {
@@ -25,10 +25,10 @@ const Register = () => {
   const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
     useFormik({
       initialValues: {
-        email: '',
-        password: '',
-        fullname: '',
-        phone: '',
+        email: "",
+        password: "",
+        fullname: "",
+        phone: "",
       },
       validationSchema: schema,
       onSubmit: (values) => {
@@ -42,7 +42,7 @@ const Register = () => {
       .then((response) => {
         const { message } = response.data;
         MySwal.fire({
-          title: 'Success',
+          title: "Success",
           text: message,
           showCancelButton: false,
         }).then((result) => {
@@ -54,8 +54,8 @@ const Register = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -74,11 +74,8 @@ const Register = () => {
         >
           <p className="text-2xl font-semibold">Create an account</p>
           <p className="text-sm">
-            Already signed up?{' '}
-            <Link
-              className="font-medium"
-              to={'/login'}
-            >
+            Already signed up?{" "}
+            <Link className="font-medium" to={"/login"}>
               Log in
             </Link>
           </p>
@@ -150,8 +147,8 @@ const Register = () => {
           </div>
 
           <button
-            id="login"
-            className="btn btn-primary mt-3"
+            id="signup"
+            className="btn btn-primary mt-3 text-white"
             type="submit"
           >
             Sign Up
@@ -160,11 +157,7 @@ const Register = () => {
         <div className="w-4/6 h-full bg-base-300 p-10 rounded-r-xl flex flex-col justify-between items-center">
           <div className="h-full flex flex-col">
             <div className="h-5/6 w-full flex justify-center ">
-              <img
-                className="h-full"
-                src={imageReg}
-                alt=""
-              />
+              <img className="h-full" src={imageReg} alt="" />
             </div>
             <div className=" h-1/6 text-center w-full mt-3">
               <p className="text-xl font-light">Unlock Extraordinary Stays:</p>
@@ -174,11 +167,7 @@ const Register = () => {
             </div>
           </div>
 
-          <img
-            className="h-7"
-            src={NavLog}
-            alt=""
-          />
+          <img className="h-7" src={NavLog} alt="" />
         </div>
       </div>
     </Layout>

@@ -1,33 +1,33 @@
-import imageLogin from '../assets/login.png';
-import withReactContent from 'sweetalert2-react-content';
-import swal from '../utils/swal';
-import NavLog from '../assets/loginreg.png';
-import { Input } from '../components/Input';
-import Layout from '../components/Layout';
+import imageLogin from "../assets/login.png";
+import withReactContent from "sweetalert2-react-content";
+import swal from "../utils/swal";
+import NavLog from "../assets/loginreg.png";
+import { Input } from "../components/Input";
+import Layout from "../components/Layout";
 
-import { Link, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import api from '../utils/api';
-import { PostLogin } from '../utils/type';
-import { useCookies } from 'react-cookie';
+import { Link, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import api from "../utils/api";
+import { PostLogin } from "../utils/type";
+import { useCookies } from "react-cookie";
 
 const schema = Yup.object().shape({
-  email: Yup.string().email('please enter a valid email').required('Required'),
-  password: Yup.string().required('Required'),
+  email: Yup.string().email("please enter a valid email").required("Required"),
+  password: Yup.string().required("Required"),
 });
 
 const Login = () => {
   const MySwal = withReactContent(swal);
   const navigate = useNavigate();
 
-  const [, setCookie] = useCookies(['user_id', 'token']);
+  const [, setCookie] = useCookies(["user_id", "token"]);
 
   const { values, errors, handleBlur, handleChange, touched, handleSubmit } =
     useFormik({
       initialValues: {
-        email: '',
-        password: '',
+        email: "",
+        password: "",
       },
       validationSchema: schema,
       onSubmit: (values) => {
@@ -41,13 +41,13 @@ const Login = () => {
       .then((response) => {
         const { data, message } = response.data;
         MySwal.fire({
-          title: 'Success',
+          title: "Success",
           text: message,
           showCancelButton: false,
         }).then((result) => {
           if (result.isConfirmed) {
-            setCookie('user_id', data.user_id, { path: '/' });
-            setCookie('token', data.token, { path: '/' });
+            setCookie("user_id", data.user_id, { path: "/" });
+            setCookie("token", data.token, { path: "/" });
             navigate(`/`);
           }
         });
@@ -55,8 +55,8 @@ const Login = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -78,10 +78,7 @@ const Login = () => {
             Log in with our data that your entered during registration
           </p>
           <div className="w-full">
-            <label
-              htmlFor="email"
-              className="label"
-            >
+            <label htmlFor="email" className="label">
               <p className="label-text">Email: </p>
             </label>
             <Input
@@ -97,10 +94,7 @@ const Login = () => {
             />
           </div>
           <div className="w-full">
-            <label
-              htmlFor="password"
-              className="label"
-            >
+            <label htmlFor="password" className="label">
               <p className="label-text">Password: </p>
             </label>
             <Input
@@ -118,17 +112,14 @@ const Login = () => {
 
           <button
             id="login"
-            className="btn btn-primary mt-3"
+            className="btn btn-primary mt-3 text-white"
             type="submit"
           >
             LOGIN
           </button>
           <p className="text-sm">
-            Don't have an account?{' '}
-            <Link
-              className="font-medium"
-              to={'/register'}
-            >
+            Don't have an account?{" "}
+            <Link className="font-medium" to={"/register"}>
               Register here
             </Link>
           </p>
@@ -140,19 +131,11 @@ const Login = () => {
               <p className="text-4xl font-semibold">WELCOME BACK!</p>
             </div>
             <div className="h-5/6 w-full flex justify-center">
-              <img
-                className="h-full"
-                src={imageLogin}
-                alt=""
-              />
+              <img className="h-full" src={imageLogin} alt="" />
             </div>
           </div>
 
-          <img
-            className="h-7"
-            src={NavLog}
-            alt=""
-          />
+          <img className="h-7" src={NavLog} alt="" />
         </div>
       </div>
     </Layout>

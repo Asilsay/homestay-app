@@ -1,11 +1,8 @@
-import image from "../assets/dashboard-imagr.png";
+import landing from "../assets/landing.png";
 import NavLog from "../assets/loginreg.png";
-import { Input } from "../components/Input";
 import Layout from "../components/Layout";
 
 import { Link } from "react-router-dom";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 
 const Landing = () => {
   return (
@@ -23,7 +20,7 @@ const Landing = () => {
           <Link
             to="/login"
             id="login"
-            className="btn btn-primary mt-6 w-auto text-white"
+            className="btn btn-primary mt-6 w-fit text-white"
             type="submit"
           >
             Get Started
@@ -33,7 +30,7 @@ const Landing = () => {
           <div className="h-5/6 w-full flex justify-center">
             <img
               className="w-full h-full object-center object-contain"
-              src={image}
+              src={landing}
               alt=""
             />
           </div>
