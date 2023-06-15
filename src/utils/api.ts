@@ -79,7 +79,6 @@ export default {
         'Access-Control-Allow-Origin': true,
       },
     }),
-
   getHomestayById: (token?: string, home_id?: string) =>
     instance({
       method: 'GET',
@@ -91,6 +90,15 @@ export default {
   putHomestayById: (token?: string, home_id?: string, data?: any) =>
     instance({
       method: 'PUT',
+      url: `homestays/${home_id}`,
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+  delHomestayById: (token?: string, home_id?: string, data?: any) =>
+    instance({
+      method: 'Delete',
       url: `homestays/${home_id}`,
       data: data,
       headers: {

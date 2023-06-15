@@ -14,7 +14,7 @@ import * as Yup from 'yup';
 import { DetailHomeType } from '../utils/type';
 import withReactContent from 'sweetalert2-react-content';
 import swal from '../utils/swal';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import api from '../utils/api';
 import LoadingFull from '../components/LoadingFull';
@@ -37,6 +37,8 @@ const HostDetail = () => {
 
   const MySwal = withReactContent(swal);
   const MyToast = withReactContent(toast);
+
+  const navigate = useNavigate();
   const params = useParams();
   const { homestay_id } = params;
 
@@ -129,6 +131,41 @@ const HostDetail = () => {
       await putHomestays(values);
     },
   });
+
+  const delHome = async () => {
+    await api
+      .delHomestayById(ckToken, homestay_id)
+      .then((response) => {
+        const { message } = response.data;
+        navigate('/');
+
+        MyToast.fire({
+          icon: 'success',
+          title: message,
+        });
+      })
+      .catch((error) => {
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${error.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
+
+  const handleDelHomestays = async () => {
+    MySwal.fire({
+      icon: 'question',
+      title: 'DELETE',
+      text: `are you sure delete ?`,
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        delHome();
+      }
+    });
+  };
 
   useEffect(() => {
     fetchDetail();
@@ -384,6 +421,7 @@ const HostDetail = () => {
                     id="check"
                     className="btn btn-error btn-outline mt-3"
                     type="button"
+                    onClick={() => handleDelHomestays()}
                   >
                     Delete Homestay
                   </button>
