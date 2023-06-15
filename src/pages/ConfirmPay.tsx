@@ -1,55 +1,57 @@
-import Layout from '../components/Layout';
-import { FC, useEffect, useState } from 'react';
-import { data } from '../json/dummyTrip.json';
+import Layout from "../components/Layout";
+import { useEffect, useState } from "react";
 
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { useNavigate, useParams } from 'react-router-dom';
-import withReactContent from 'sweetalert2-react-content';
-import swal from '../utils/swal';
-import { useCookies } from 'react-cookie';
-import api from '../utils/api';
-import { reservType } from '../utils/type';
-import LoadingFull from '../components/LoadingFull';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useNavigate, useParams } from "react-router-dom";
+import withReactContent from "sweetalert2-react-content";
+import swal from "../utils/swal";
+import { useCookies } from "react-cookie";
+import api from "../utils/api";
+import { reservType } from "../utils/type";
+import LoadingFull from "../components/LoadingFull";
+import toast from "../utils/toast";
+import { Select } from "../components/Input";
 
 const schemaConfirm = Yup.object().shape({
   status: Yup.object()
     .shape({
-      bank: Yup.string().required('status is required'),
+      bank_account: Yup.string().required("status is required"),
+      reservation_id: Yup.string().required("status is required"),
+      amount: Yup.string().required("status is required"),
     })
     .nullable() // for handling null value when clearing options via clicking "x"
-    .required('status is required (from outter null check)'),
+    .required("status is required (from outter null check)"),
 });
 
 const ConfirmPay = () => {
   const [load, setLoad] = useState<boolean>(false);
-  const [dataPayment, setDataPayment] = useState();
   const [dataReserv, setDataReserv] = useState<reservType>();
   const navigate = useNavigate();
 
   const MySwal = withReactContent(swal);
+  const MyToast = withReactContent(toast);
   const params = useParams();
   const { reservation_id } = params;
 
-  const [cookie] = useCookies(['token']);
+  const [cookie, ,] = useCookies(["token"]);
   const ckToken = cookie.token;
 
+  // const formDataToPost = async (datad?: any) => {
+  //   const formData = new FormData();
+  //   formData.append("bank_account", datad.bank_account);
+  //   formData.append("reservation_id", datad.reservation_id);
+  //   formData.append("amount", datad.amount);
+  //   await postPay(formData);
+  // };
   const dateType = (date: any) => {
     const dated: any = new Date(date);
-    const formattedDate = dated.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+    const formattedDate = dated.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
     return formattedDate;
-  };
-
-  const formatedPrice = (n: any) => {
-    const formattedNumber = n.toLocaleString('en-US', {
-      useGrouping: true,
-      maximumFractionDigits: 0,
-    });
-    return formattedNumber;
   };
 
   const calculateDays = (start: any, end: any): number => {
@@ -67,12 +69,13 @@ const ConfirmPay = () => {
       .then(async (response) => {
         const { data } = response.data;
         setDataReserv(data);
+        console.log(data);
       })
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -82,17 +85,44 @@ const ConfirmPay = () => {
 
   const formik = useFormik({
     initialValues: {
-      bank: '',
+      bank_account: "",
+      reservation_id: "",
+      amount: "",
     },
     validationSchema: schemaConfirm,
     onSubmit: (values) => {
-      console.log(values);
+      postPay(values);
     },
   });
+  const postPay = async (datapay: any) => {
+    setLoad(true);
+    await api
+      .postPayment(ckToken, datapay)
+      .then((response) => {
+        const { message } = response.data;
+        navigate("/");
+
+        MyToast.fire({
+          icon: "success",
+          title: message,
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: "error",
+          title: "Failed",
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
 
   useEffect(() => {
     fetchPayment();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    formik.setFieldValue("amount", dataReserv?.amount);
+    formik.setFieldValue("reservation_id", reservation_id);
   }, []);
 
   return (
@@ -110,7 +140,10 @@ const ConfirmPay = () => {
             </p>
             <div className="divider"></div>
           </div>
-          <form className="flex flex-col gap-3 w-full mt-3">
+          <form
+            onSubmit={formik.handleSubmit}
+            className="flex flex-col gap-3 w-full mt-3"
+          >
             <div className="flex flex-col">
               <div className="w-full">
                 <label className="label">
@@ -118,17 +151,20 @@ const ConfirmPay = () => {
                     Choose a Bank
                   </span>
                 </label>
-                <select className="select select-bordered w-full">
-                  <option
-                    disabled
-                    selected
-                  >
-                    Pick one
-                  </option>
-                  <option value={'BNI'}>BNI</option>
-                  <option value={'BCA'}>BCA</option>
-                  <option value={'BRI'}>BRI</option>
-                </select>
+                <Select
+                  id="bank_account"
+                  name="bank_account"
+                  label="Bank"
+                  value={formik.values.bank_account}
+                  onChangeSelect={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={formik.errors.bank_account}
+                  touch={formik.touched.bank_account}
+                >
+                  <option value="bri">BRI</option>
+                  <option value="bca">BCA</option>
+                  <option value="bni">BNI</option>
+                </Select>
               </div>
             </div>
             <div className="h-full w-full p-5 justify-between bg-gray-200 rounded-box shadow-md flex flex-row">
@@ -147,25 +183,17 @@ const ConfirmPay = () => {
                 </div>
 
                 <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                  Rp{formatedPrice(dataReserv?.homestay_price)} x{' '}
+                  Rp{dataReserv?.homestay_price} x{" "}
                   {calculateDays(
                     dataReserv?.checkin_date,
                     dataReserv?.checkout_date
-                  )}{' '}
+                  )}{" "}
                   <span className="font-normal">{` `}Night</span>
                 </p>
                 <div className="divider w-96 my-1"></div>
                 <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
                   Total Rp
-                  {formatedPrice(
-                    calculateDays(
-                      dataReserv?.checkin_date,
-                      dataReserv?.checkout_date
-                    ) *
-                      (dataReserv?.homestay_price
-                        ? dataReserv?.homestay_price
-                        : 1)
-                  )}
+                  {dataReserv?.amount}
                 </p>
               </div>
             </div>
