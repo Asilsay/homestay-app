@@ -1,11 +1,11 @@
-import image from '../assets/dashboard-imagr.png';
-import NavLog from '../assets/loginreg.png';
-import { Input } from '../components/Input';
-import Layout from '../components/Layout';
+import image from "../assets/dashboard-imagr.png";
+import NavLog from "../assets/loginreg.png";
+import { Input } from "../components/Input";
+import Layout from "../components/Layout";
 
-import { Link } from 'react-router-dom';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import { Link } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const Landing = () => {
   return (
@@ -23,7 +23,7 @@ const Landing = () => {
           <Link
             to="/login"
             id="login"
-            className="btn btn-primary mt-6 w-32"
+            className="btn btn-primary mt-6 w-auto text-white"
             type="submit"
           >
             Get Started
@@ -38,11 +38,7 @@ const Landing = () => {
             />
           </div>
 
-          <img
-            className="h-7"
-            src={NavLog}
-            alt=""
-          />
+          <img className="h-7" src={NavLog} alt="" />
         </div>
       </div>
     </Layout>

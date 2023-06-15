@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { PostLogin, PostRegis, getUsers } from './type';
+import { PostLogin, PostRegis } from './type';
 
 const instance = axios.create({
-  baseURL: `http://35.223.114.62/`,
+  baseURL: `https://peterzalai.biz.id/`,
 });
 
 export default {
@@ -48,4 +48,13 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+  // --- list homestay ---
+  getAllHomestay: (token?: string) => instance({
+    method: 'GET',
+    url: 'homestays',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Access-Control-Allow-Origin": true
+    }
+  })
 };
