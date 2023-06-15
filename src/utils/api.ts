@@ -88,4 +88,13 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+  putHomestayById: (token?: string, home_id?: string, data?: any) =>
+    instance({
+      method: 'PUT',
+      url: `homestays/${home_id}`,
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 };

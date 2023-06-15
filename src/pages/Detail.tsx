@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { Input } from '../components/Input';
 import { DetailHomeType } from '../utils/type';
 import withReactContent from 'sweetalert2-react-content';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import swal from '../utils/swal';
 import { useCookies } from 'react-cookie';
 import api from '../utils/api';
