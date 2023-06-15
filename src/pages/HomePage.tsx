@@ -66,12 +66,16 @@ const HomePage = () => {
           {loading ? (
             <LoadingFull />
           ) : (
-            <div className="flex flex-wrap justify-center mt-10 gap-3 mb-10 p-3">
+            <div className="flex flex-col justify-center mt-10 gap-3 mb-10 p-3">
               {homestay?.data?.map((item: any) => (
                 <CardList
                   key={item.id}
                   id={item.homestay_id}
-                  image={item.homestay_pictures[0].homestay_picture}
+                  image={
+                    item.homestay_picture
+                      ? item.homestay_picture
+                      : "https://placehold.co/600x400/png?text=image"
+                  }
                   title={item.name}
                   price={`Rp.${item.price}`}
                   description={item.description}

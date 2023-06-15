@@ -1,51 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useCookies } from "react-cookie";
+import withReactContent from "sweetalert2-react-content";
+import swal from "../utils/swal";
+import { useNavigate } from "react-router-dom";
 
-import { InputFile } from "../components/Input";
+import { Input, InputFile } from "../components/Input";
 import Layout from "../components/Layout";
 import hotel from "../assets/Untitled.jpg";
+import api from "../utils/api";
+import toast from "../utils/toast";
 
 const schemaHosting = Yup.object().shape({
   name: Yup.string().required("Required"),
   description: Yup.string().required("Required"),
   address: Yup.string().required("Required"),
   price: Yup.number().required("Required"),
-  picture_id: Yup.mixed().required("Image is required"),
-});
-const schemaImgHosting = Yup.object().shape({
-  picture_id: Yup.mixed().required("Image is required"),
+  homestay_picture: Yup.mixed().required("Image is required"),
 });
 
 const Hosting = () => {
+  const [preview, setPreview] = useState<string | null>(null);
+  const MySwal = withReactContent(swal);
+  const MyToast = withReactContent(toast);
+  const navigate = useNavigate();
+  const [cookie, ,] = useCookies(["user_id", "token", "pp"]);
+  const ckToken = cookie.token;
+  const formDataToPost = async (datad?: any) => {
+    const formData = new FormData();
+    formData.append("name", datad.name);
+    formData.append("description", datad.description);
+    formData.append("address", datad.address);
+    formData.append("price", datad.price);
+    formData.append("homestay_picture", datad.homestay_picture);
+    await postHosting(formData);
+  };
+
   const formik = useFormik({
     initialValues: {
       name: "",
       description: "",
       address: "",
       price: "",
-      picture_id: "",
+      homestay_picture: "",
     },
     validationSchema: schemaHosting,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      await formDataToPost(values);
     },
   });
-  const formikEditImage = useFormik({
-    initialValues: {
-      picture_id: null,
-    },
-    validationSchema: schemaImgHosting,
-    onSubmit: (values) => {
-      console.log(values);
-    },
-  });
+  const postHosting = async (datad?: any) => {
+    await console.log(datad);
+    await api
+      .addHosting(ckToken, datad)
+      .then((response) => {
+        const { message } = response.data;
+        navigate("/");
+
+        MyToast.fire({
+          icon: "success",
+          title: message,
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: "error",
+          title: "Failed",
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
     if (file) {
-      formikEditImage.setFieldValue("picture_id", file);
+      formik.setFieldValue("homestay_picture", file);
+      setPreview(URL.createObjectURL(file));
     }
   };
+
   return (
     <Layout chose="layout">
       <Layout
@@ -59,15 +94,19 @@ const Hosting = () => {
           <div className="divider"></div>
         </div>
         <form
-          onSubmit={formikEditImage.handleSubmit}
+          onSubmit={formik.handleSubmit}
           className="flex flex-col gap-3 w-full mt-3"
         >
           <div className="flex flex-row">
             <div className="w-1/2 h-full p-3 gap-10">
               <img
-                src={hotel}
-                alt=""
-                className="w-full h-full object-center object-cover"
+                src={
+                  preview
+                    ? preview
+                    : "https://placehold.co/600x400/png?text=placeholder+image"
+                }
+                alt={`Homestay's picture`}
+                className="h-full w-full border-spacing-1 object-cover object-center"
               />
               <br />
               <InputFile
@@ -75,43 +114,67 @@ const Hosting = () => {
                 name="picture_id"
                 label="picture_id name"
                 onChange={handleImageChange}
-                onBlur={formikEditImage.handleBlur}
-                error={formikEditImage.errors.picture_id}
-                touch={formikEditImage.touched.picture_id}
+                onBlur={formik.handleBlur}
+                error={formik.errors.homestay_picture}
+                touch={formik.touched.homestay_picture}
               />
             </div>
             <div className="flex flex-col gap-5 w-1/2">
               <label htmlFor="" className="text-[#291334]">
                 Name
               </label>
-              <input
+              <Input
+                id="name"
+                name="name"
+                label="type the name here"
                 type="text"
                 value={formik.values.name}
-                className="border-b-2  h-14  mb-5 outline-none"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.errors.name}
+                touch={formik.touched.name}
               />
               <label htmlFor="" className="text-[#291334]">
                 Price
               </label>
-              <input
-                type="text"
+              <Input
+                id="price"
+                name="price"
+                label="type the price here"
+                type="number"
                 value={formik.values.price}
-                className="border-b-2  h-14  mb-5 outline-none"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.errors.price}
+                touch={formik.touched.price}
               />
               <label htmlFor="" className="text-[#291334]">
                 Location
               </label>
-              <input
+              <Input
+                id="address"
+                name="address"
+                label="type the address here"
                 type="text"
                 value={formik.values.address}
-                className="border-b-2  h-14  mb-5 outline-none"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.errors.address}
+                touch={formik.touched.address}
               />
               <label htmlFor="" className="text-[#291334]">
                 Description
               </label>
-              <input
-                type="textarea"
+              <Input
+                id="description"
+                name="description"
+                label="type the description here"
+                type="text"
                 value={formik.values.description}
-                className="border-b-2  h-14  mb-5 outline-none"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.errors.description}
+                touch={formik.touched.description}
               />
             </div>
           </div>
