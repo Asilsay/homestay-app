@@ -95,5 +95,5 @@ Vercel Deploy : [Vercel]()
 
 # 🤖 Author
 
-- Achmad Setyo Aldi <br> [![GitHub](https://img.shields.io/badge/BelhiRomdona-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/setyoaldi)
-- Labaik Fasya Asil Say <br> [![GitHub](https://img.shields.io/badge/DimasYudhana-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Asilsay)
+- Achmad Setyo Aldi <br> [![GitHub](https://img.shields.io/badge/setyoaldi-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/setyoaldi)
+- Labaik Fasya Asil Say <br> [![GitHub](https://img.shields.io/badge/Asilsay-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Asilsay)
