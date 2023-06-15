@@ -147,8 +147,6 @@ export default {
       },
     }),
 
-  // --- payment ---
-
   getReservById: (token?: string, rsv_id?: string) =>
     instance({
       method: 'GET',
@@ -157,7 +155,6 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
-
 
   // --- reviews ---
   postReview: (token?: string, data?: any) =>
@@ -170,13 +167,15 @@ export default {
       },
     }),
 
-  postPayment: (token?: string, datapay?: any) => instance({
-    method: 'POST',
-    url: 'payments',
-    data: datapay,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+  // --- payment ---
 
+  postPayment: (token?: string, datapay?: any) =>
+    instance({
+      method: 'POST',
+      url: 'payments',
+      data: datapay,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 };

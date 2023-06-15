@@ -1,27 +1,22 @@
-import Layout from "../components/Layout";
-import { useEffect, useState } from "react";
+import Layout from '../components/Layout';
+import { useEffect, useState } from 'react';
 
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { useNavigate, useParams } from "react-router-dom";
-import withReactContent from "sweetalert2-react-content";
-import swal from "../utils/swal";
-import { useCookies } from "react-cookie";
-import api from "../utils/api";
-import { reservType } from "../utils/type";
-import LoadingFull from "../components/LoadingFull";
-import toast from "../utils/toast";
-import { Select } from "../components/Input";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useNavigate, useParams } from 'react-router-dom';
+import withReactContent from 'sweetalert2-react-content';
+import swal from '../utils/swal';
+import { useCookies } from 'react-cookie';
+import api from '../utils/api';
+import { reservType } from '../utils/type';
+import LoadingFull from '../components/LoadingFull';
+import toast from '../utils/toast';
+import { Select } from '../components/Input';
 
 const schemaConfirm = Yup.object().shape({
-  status: Yup.object()
-    .shape({
-      bank_account: Yup.string().required("status is required"),
-      reservation_id: Yup.string().required("status is required"),
-      amount: Yup.string().required("status is required"),
-    })
-    .nullable() // for handling null value when clearing options via clicking "x"
-    .required("status is required (from outter null check)"),
+  bank_account: Yup.string().required('status is required'),
+  reservation_id: Yup.string().required('status is required'),
+  amount: Yup.string().required('status is required'),
 });
 
 const ConfirmPay = () => {
@@ -34,7 +29,7 @@ const ConfirmPay = () => {
   const params = useParams();
   const { reservation_id } = params;
 
-  const [cookie, ,] = useCookies(["token"]);
+  const [cookie, ,] = useCookies(['token']);
   const ckToken = cookie.token;
 
   // const formDataToPost = async (datad?: any) => {
@@ -44,12 +39,13 @@ const ConfirmPay = () => {
   //   formData.append("amount", datad.amount);
   //   await postPay(formData);
   // };
+
   const dateType = (date: any) => {
     const dated: any = new Date(date);
-    const formattedDate = dated.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
+    const formattedDate = dated.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
     });
     return formattedDate;
   };
@@ -74,8 +70,8 @@ const ConfirmPay = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: "error",
-          title: "Failed",
+          icon: 'error',
+          title: 'Failed',
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -85,44 +81,46 @@ const ConfirmPay = () => {
 
   const formik = useFormik({
     initialValues: {
-      bank_account: "",
-      reservation_id: "",
-      amount: "",
+      bank_account: '',
+      reservation_id: '',
+      amount: '',
     },
     validationSchema: schemaConfirm,
     onSubmit: (values) => {
       postPay(values);
     },
   });
+
   const postPay = async (datapay: any) => {
     setLoad(true);
     await api
       .postPayment(ckToken, datapay)
       .then((response) => {
         const { message } = response.data;
-        navigate("/");
+        navigate('/trip');
 
         MyToast.fire({
-          icon: "success",
+          icon: 'success',
           title: message,
         });
       })
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: "error",
-          title: "Failed",
+          icon: 'error',
+          title: 'Failed',
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
-      });
+      })
+      .finally(() => setLoad(false));
   };
 
   useEffect(() => {
     fetchPayment();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    formik.setFieldValue("amount", dataReserv?.amount);
-    formik.setFieldValue("reservation_id", reservation_id);
+    formik.setFieldValue('amount', dataReserv?.amount.toString());
+    formik.setFieldValue('reservation_id', reservation_id);
   }, []);
 
   return (
@@ -183,11 +181,11 @@ const ConfirmPay = () => {
                 </div>
 
                 <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                  Rp{dataReserv?.homestay_price} x{" "}
+                  Rp{dataReserv?.homestay_price} x{' '}
                   {calculateDays(
                     dataReserv?.checkin_date,
                     dataReserv?.checkout_date
-                  )}{" "}
+                  )}{' '}
                   <span className="font-normal">{` `}Night</span>
                 </p>
                 <div className="divider w-96 my-1"></div>

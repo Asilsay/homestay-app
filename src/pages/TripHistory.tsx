@@ -12,6 +12,7 @@ import { useCookies } from 'react-cookie';
 import withReactContent from 'sweetalert2-react-content';
 import swal from '../utils/swal';
 import { ReadResevType } from '../utils/type';
+import LoadingFull from '../components/LoadingFull';
 
 const TripCard = lazy(() => import('../components/TripCard'));
 
@@ -56,6 +57,7 @@ const TripHistory = () => {
       });
   };
   const fetchReservation = async () => {
+    setLoading(true);
     await api
       .getAllReservation(ckToken)
       .then((response) => {
@@ -70,7 +72,8 @@ const TripHistory = () => {
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const postReviews = async (data: any) => {
@@ -78,6 +81,7 @@ const TripHistory = () => {
       .postReview(ckToken, data)
       .then((response) => {
         const { message } = response.data;
+        fetchReservation();
         MySwal.fire({
           title: 'Success',
           text: message,
@@ -125,96 +129,104 @@ const TripHistory = () => {
 
   return (
     <Layout chose="layout">
-      <Modals id="modal-review">
-        <form
-          onSubmit={formikAdd.handleSubmit}
-          className="flex flex-col gap-5 items-center"
-        >
-          <p className="text-primary font-medium tracking-wide text-2xl mb-3">
-            Add Review
-          </p>
-          <TextArea
-            id="review"
-            name="review"
-            label="review"
-            value={formikAdd.values.review}
-            onChange={formikAdd.handleChange}
-            onBlur={formikAdd.handleBlur}
-            error={formikAdd.errors.review}
-            touch={formikAdd.touched.review}
-          />
+      {loading ? (
+        <LoadingFull />
+      ) : (
+        <>
+          <Modals id="modal-review">
+            <form
+              onSubmit={formikAdd.handleSubmit}
+              className="flex flex-col gap-5 items-center"
+            >
+              <p className="text-primary font-medium tracking-wide text-2xl mb-3">
+                Add Review
+              </p>
+              <TextArea
+                id="review"
+                name="review"
+                label="review"
+                value={formikAdd.values.review}
+                onChange={formikAdd.handleChange}
+                onBlur={formikAdd.handleBlur}
+                error={formikAdd.errors.review}
+                touch={formikAdd.touched.review}
+              />
 
-          <div className="flex items-center">
-            {[1, 2, 3, 4, 5].map((value) => (
-              <button
-                key={value}
-                className={`mr-1 ${
-                  rating >= value ? 'text-warning' : 'text-base-300'
-                }`}
-                onClick={() => {
-                  handleStarClick(value);
-                  formikAdd.setFieldValue('rating', value);
-                  formikAdd.setFieldTouched('rating', true);
-                }}
-                type="button"
-              >
-                <FaStar />
-              </button>
-            ))}
-            <span>{rating}</span>
-          </div>
-          {formikAdd.touched.rating && formikAdd.errors.rating && (
-            <div className="text-error">{formikAdd.errors.rating}</div>
-          )}
-          <div className="w-full flex justify-end gap-3">
-            <div className="modal-action mt-0 ">
-              <label
-                htmlFor="modal-review"
-                className="btn btn-ghost"
-              >
-                Close
-              </label>
-            </div>
-            <button className="btn btn-primary w-32">Submit</button>
-          </div>
-        </form>
-      </Modals>
-      <Layout
-        chose="section"
-        addClass="bg-base-100 flex flex-col  py-16 px-20"
-      >
-        <p className="text-4xl font-semibold text-neutral uppercase">
-          My Reservation
-        </p>
-        <div className="divider"></div>
-
-        <div className="w-full p-4">
-          <Suspense
-            fallback={<span className="loading loading-dots loading-md"></span>}
+              <div className="flex items-center">
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <button
+                    key={value}
+                    className={`mr-1 ${
+                      rating >= value ? 'text-warning' : 'text-base-300'
+                    }`}
+                    onClick={() => {
+                      handleStarClick(value);
+                      formikAdd.setFieldValue('rating', value);
+                      formikAdd.setFieldTouched('rating', true);
+                    }}
+                    type="button"
+                  >
+                    <FaStar />
+                  </button>
+                ))}
+                <span>{rating}</span>
+              </div>
+              {formikAdd.touched.rating && formikAdd.errors.rating && (
+                <div className="text-error">{formikAdd.errors.rating}</div>
+              )}
+              <div className="w-full flex justify-end gap-3">
+                <div className="modal-action mt-0 ">
+                  <label
+                    htmlFor="modal-review"
+                    className="btn btn-ghost"
+                  >
+                    Close
+                  </label>
+                </div>
+                <button className="btn btn-primary w-32">Submit</button>
+              </div>
+            </form>
+          </Modals>
+          <Layout
+            chose="section"
+            addClass="bg-base-100 flex flex-col  py-16 px-20"
           >
-            <div className="grid grid-cols-1 gap-5">
-              {dataReserv.map((data, idx) => {
-                return (
-                  <TripCard
-                    key={idx}
-                    homestay_name={data.homestay_name}
-                    payment_status={data.status}
-                    checkin_date={data.checkin_date}
-                    checkout_date={data.checkout_date}
-                    amount={data.amount}
-                    homestay_price={data.homestay_price}
-                    duration={data.duration}
-                    bank_account={data.bank_account}
-                    va_number={data.va_number}
-                    reservation_id={data.reservation_id}
-                    onCLick={() => handlerClick(data.homestay_name)}
-                  />
-                );
-              })}
+            <p className="text-4xl font-semibold text-neutral uppercase">
+              My Reservation
+            </p>
+            <div className="divider"></div>
+
+            <div className="w-full p-4">
+              <Suspense
+                fallback={
+                  <span className="loading loading-dots loading-md"></span>
+                }
+              >
+                <div className="grid grid-cols-1 gap-5">
+                  {dataReserv.map((data, idx) => {
+                    return (
+                      <TripCard
+                        key={idx}
+                        homestay_name={data.homestay_name}
+                        payment_status={data.status}
+                        checkin_date={data.checkin_date}
+                        checkout_date={data.checkout_date}
+                        amount={data.amount}
+                        homestay_price={data.homestay_price}
+                        duration={data.duration}
+                        bank_account={data.bank_account}
+                        va_number={data.va_number}
+                        reservation_id={data.reservation_id}
+                        onCLick={() => handlerClick(data.homestay_name)}
+                      />
+                    );
+                  })}
+                </div>
+              </Suspense>
             </div>
-          </Suspense>
-        </div>
-      </Layout>
+          </Layout>
+        </>
+      )}
     </Layout>
   );
 };
