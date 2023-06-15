@@ -106,6 +106,18 @@ export default {
       },
     }),
 
+  // --- pictures ---
+  PostImage: (token?: string, home_id?: string, data?: any) =>
+    instance({
+      method: 'POST',
+      url: `homestays/${home_id}/pictures`,
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Access-Control-Allow-Origin': true,
+      },
+    }),
+
   // --- list Reservation ---
 
   postCheckReservation: (token?: string, data?: any) =>
