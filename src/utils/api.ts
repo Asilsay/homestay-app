@@ -48,7 +48,17 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+  putUserRoleById: (token?: string, data?: any) =>
+    instance({
+      method: 'PUT',
+      url: `users/role`,
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
   // --- list homestay ---
+  
   getAllHomestay: (token?: string) => instance({
     method: 'GET',
     url: 'homestays',
