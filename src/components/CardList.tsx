@@ -1,11 +1,11 @@
 import { FC } from "react";
 import { AiTwotoneStar } from "react-icons/ai";
-import hotel from "../assets/Untitled.jpg";
 
 interface listProps {
+  id: number;
   title: string;
-  address: string;
-  price: any;
+  address?: string;
+  price?: any;
   rating?: number;
   description?: string;
   image?: string;
@@ -14,7 +14,6 @@ interface listProps {
 
 const Card: FC<listProps> = ({
   title,
-  address,
   price,
   description,
   handleDetail,
@@ -27,7 +26,7 @@ const Card: FC<listProps> = ({
       onClick={handleDetail}
     >
       <figure>
-        <img src={(image = hotel)} alt="Hotel Room" />
+        <img src={image} alt="Hotel Room" />
       </figure>
       <div className="card-body px-2 py-4">
         <div className="card-title font-semibold text-[#291334] text-4xl md:text-md  mb-2">
