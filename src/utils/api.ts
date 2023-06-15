@@ -126,4 +126,15 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+
+  // --- payment ---
+
+  getReservById: (token?: string, rsv_id?: string) =>
+    instance({
+      method: 'GET',
+      url: `reservations/${rsv_id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 };
