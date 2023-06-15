@@ -2,7 +2,7 @@ import axios from 'axios';
 import { PostLogin, PostRegis } from './type';
 
 const instance = axios.create({
-  baseURL: `https://peterzalai.biz.id/`,
+  baseURL: `http://35.223.114.62/`,
 });
 
 export default {
@@ -52,6 +52,16 @@ export default {
   getAllHomestay: (token?: string) => instance({
     method: 'GET',
     url: 'homestays',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Access-Control-Allow-Origin": true
+    }
+  }),
+
+  addHosting: (token?: string, data?: any) => instance({
+    method: 'POST',
+    url: 'homestays',
+    data: data,
     headers: {
       Authorization: `Bearer ${token}`,
       "Access-Control-Allow-Origin": true
