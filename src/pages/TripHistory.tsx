@@ -17,6 +17,7 @@ const TripCard = lazy(() => import('../components/TripCard'));
 
 const addSchema = Yup.object().shape({
   review: Yup.string().required('Required'),
+  homestay_id: Yup.string().required('Required'),
   rating: Yup.number()
     .min(1, 'Rating must be at least 1')
     .max(5, 'Rating must not exceed 5')
@@ -34,7 +35,7 @@ const TripHistory = () => {
   };
   const MySwal = withReactContent(swal);
 
-  const [cookie, setCookie] = useCookies(['token', 'pp', 'role']);
+  const [cookie] = useCookies(['token', 'pp', 'role']);
   const ckToken = cookie.token;
 
   const fetchData = async () => {
@@ -72,16 +73,49 @@ const TripHistory = () => {
       });
   };
 
+  const postReviews = async (data: any) => {
+    await api
+      .postReview(ckToken, data)
+      .then((response) => {
+        const { message } = response.data;
+        MySwal.fire({
+          title: 'Success',
+          text: message,
+          showCancelButton: false,
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          icon: 'error',
+          title: 'Failed',
+          text: `error :  ${data.message}`,
+          showCancelButton: false,
+        });
+      });
+  };
+
   const formikAdd = useFormik({
     initialValues: {
       review: '',
       rating: 0,
+      homestay_id: '',
     },
     validationSchema: addSchema,
     onSubmit: (values) => {
-      console.log(values);
+      postReviews(values);
     },
   });
+
+  const handlerClick = (str?: string) => {
+    const id = getHomestays_id(str);
+    formikAdd.setFieldValue('homestay_id', id);
+  };
+
+  const getHomestays_id = (name?: string) => {
+    const dataItem = homestay.find((item: any) => item.name === name);
+    return dataItem?.homestay_id;
+  };
 
   useEffect(() => {
     fetchReservation();
@@ -172,6 +206,8 @@ const TripHistory = () => {
                     duration={data.duration}
                     bank_account={data.bank_account}
                     va_number={data.va_number}
+                    reservation_id={data.reservation_id}
+                    onCLick={() => handlerClick(data.homestay_name)}
                   />
                 );
               })}

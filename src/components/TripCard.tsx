@@ -12,6 +12,7 @@ interface Props {
   payment_status?: string;
   bank_account?: string;
   va_number?: string;
+  onCLick?: React.MouseEventHandler;
 }
 
 const TripCard: FC<Props> = (props) => {
@@ -26,6 +27,7 @@ const TripCard: FC<Props> = (props) => {
     payment_status,
     bank_account,
     va_number,
+    onCLick,
   } = props;
   const navigate = useNavigate();
 
@@ -85,6 +87,7 @@ const TripCard: FC<Props> = (props) => {
             <label
               className="btn btn-primary w-32 mt-1 text-lg text-neutral font-medium"
               htmlFor="modal-review"
+              onClick={onCLick}
             >
               Review
             </label>

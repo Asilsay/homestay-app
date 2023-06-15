@@ -157,4 +157,15 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+
+  // --- reviews ---
+  postReview: (token?: string, data?: any) =>
+    instance({
+      method: 'POST',
+      url: 'reviews',
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 };
