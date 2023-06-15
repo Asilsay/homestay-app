@@ -7,7 +7,7 @@ import { lazy, Suspense, useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../components/Input';
-import { DetailHomeType } from '../utils/type';
+import { DataReserveType, DetailHomeType } from '../utils/type';
 import withReactContent from 'sweetalert2-react-content';
 import { useParams } from 'react-router-dom';
 import swal from '../utils/swal';
@@ -43,7 +43,7 @@ const Detail = () => {
   const [dataHome, setDataHome] = useState<DetailHomeType>();
   const [checkReserv, setCheckReserv] = useState<boolean>(false);
   const [load, setLoad] = useState<boolean>(false);
-  const [Days, setDays] = useState<number>();
+  const [dataReserv, setDataReserv] = useState<DataReserveType>();
 
   const MySwal = withReactContent(swal);
   const params = useParams();
@@ -59,8 +59,6 @@ const Detail = () => {
     },
     validationSchema: schemaReservasi,
     onSubmit: async (values) => {
-      const dayss = calculateDays(values.checkin_date, values.checkout_date);
-      setDays(dayss);
       const check = {
         homestay_id: homestay_id,
         checkin_date: values.checkin_date,
@@ -69,14 +67,6 @@ const Detail = () => {
       await PostCheck(check);
     },
   });
-
-  const calculateDays = (start: string, end: string): number => {
-    const startDateObj = new Date(start);
-    const endDateObj = new Date(end);
-    const timeDiff = Math.abs(endDateObj.getTime() - startDateObj.getTime());
-    const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    return days;
-  };
 
   const fetchDetail = async () => {
     setLoad(true);
@@ -102,8 +92,9 @@ const Detail = () => {
     await api
       .postCheckReservation(ckToken, code)
       .then((response) => {
-        const { data, message } = response.data;
-        console.log(data);
+        const { message } = response.data;
+        setDataReserv(code);
+
         MySwal.fire({
           title: 'Success',
           text: message,
@@ -322,7 +313,7 @@ const Detail = () => {
                   <button
                     id="check"
                     className="btn btn-primary mt-3 w-[45%]"
-                    type="submit"
+                    onClick={() => PostReserv(dataReserv)}
                   >
                     Make Reservation
                   </button>

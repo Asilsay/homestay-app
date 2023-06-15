@@ -22,3 +22,9 @@ export interface DetailHomeType {
   total_reviews?: number;
   average_rating?: number;
 }
+
+export interface DataReserveType {
+  homestay_id?: string;
+  checkin_date?: string;
+  checkout_date?: string;
+}

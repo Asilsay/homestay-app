@@ -120,7 +120,7 @@ export default {
   postReserv: (token?: string, data?: any) =>
     instance({
       method: 'POST',
-      url: 'reservations/availability',
+      url: 'reservations',
       data: data,
       headers: {
         Authorization: `Bearer ${token}`,
