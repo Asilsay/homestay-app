@@ -58,23 +58,51 @@ export default {
       },
     }),
   // --- list homestay ---
-  
-  getAllHomestay: (token?: string) => instance({
-    method: 'GET',
-    url: 'homestays',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Access-Control-Allow-Origin": true
-    }
-  }),
 
-  addHosting: (token?: string, data?: any) => instance({
-    method: 'POST',
-    url: 'homestays',
-    data: data,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Access-Control-Allow-Origin": true
-    }
-  })
+  getAllHomestay: (token?: string) =>
+    instance({
+      method: 'GET',
+      url: 'homestays',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Access-Control-Allow-Origin': true,
+      },
+    }),
+
+  addHosting: (token?: string, data?: any) =>
+    instance({
+      method: 'POST',
+      url: 'homestays',
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Access-Control-Allow-Origin': true,
+      },
+    }),
+  getHomestayById: (token?: string, home_id?: string) =>
+    instance({
+      method: 'GET',
+      url: `homestays/${home_id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+  putHomestayById: (token?: string, home_id?: string, data?: any) =>
+    instance({
+      method: 'PUT',
+      url: `homestays/${home_id}`,
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+  delHomestayById: (token?: string, home_id?: string, data?: any) =>
+    instance({
+      method: 'Delete',
+      url: `homestays/${home_id}`,
+      data: data,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 };

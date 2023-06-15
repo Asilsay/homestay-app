@@ -1,6 +1,6 @@
-import { FC } from "react";
-import { AiTwotoneStar } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { FC } from 'react';
+import { AiTwotoneStar } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 interface listProps {
   id: number;
@@ -10,6 +10,7 @@ interface listProps {
   rating?: number;
   description?: string;
   image?: string;
+  to?: string;
 }
 
 const Card: FC<listProps> = ({
@@ -19,11 +20,12 @@ const Card: FC<listProps> = ({
   description,
   image,
   rating,
+  to,
 }) => {
   const navigate = useNavigate();
 
   function onClickDetail() {
-    navigate(`/homestays/${id}`);
+    navigate(`/${to}/${id}`);
   }
   return (
     <div
@@ -32,7 +34,11 @@ const Card: FC<listProps> = ({
     >
       <div className="card-body w-1/2">
         <figure>
-          <img className="w-full h-full" src={image} alt="Hotel Room" />
+          <img
+            className="w-full h-full"
+            src={image}
+            alt="Hotel Room"
+          />
         </figure>
       </div>
 
