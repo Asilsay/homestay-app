@@ -1,27 +1,27 @@
-import Layout from '../components/Layout';
-import { Modals } from '../components/Modals';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import Layout from "../components/Layout";
+import { Modals } from "../components/Modals";
+import { lazy, Suspense, useEffect, useState } from "react";
 
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { TextArea } from '../components/Input';
-import { FaStar } from 'react-icons/fa';
-import api from '../utils/api';
-import { useCookies } from 'react-cookie';
-import withReactContent from 'sweetalert2-react-content';
-import swal from '../utils/swal';
-import { ReadResevType } from '../utils/type';
-import LoadingFull from '../components/LoadingFull';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { TextArea } from "../components/Input";
+import { FaStar } from "react-icons/fa";
+import api from "../utils/api";
+import { useCookies } from "react-cookie";
+import withReactContent from "sweetalert2-react-content";
+import swal from "../utils/swal";
+import { ReadResevType } from "../utils/type";
+import LoadingFull from "../components/LoadingFull";
 
-const TripCard = lazy(() => import('../components/TripCard'));
+const TripCard = lazy(() => import("../components/TripCard"));
 
 const addSchema = Yup.object().shape({
-  review: Yup.string().required('Required'),
-  homestay_id: Yup.string().required('Required'),
+  review: Yup.string().required("Required"),
+  homestay_id: Yup.string().required("Required"),
   rating: Yup.number()
-    .min(1, 'Rating must be at least 1')
-    .max(5, 'Rating must not exceed 5')
-    .required('Required'),
+    .min(1, "Rating must be at least 1")
+    .max(5, "Rating must not exceed 5")
+    .required("Required"),
 });
 
 const TripHistory = () => {
@@ -35,7 +35,7 @@ const TripHistory = () => {
   };
   const MySwal = withReactContent(swal);
 
-  const [cookie] = useCookies(['token', 'pp', 'role']);
+  const [cookie] = useCookies(["token", "pp", "role"]);
   const ckToken = cookie.token;
 
   const fetchData = async () => {
@@ -48,8 +48,8 @@ const TripHistory = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -66,8 +66,8 @@ const TripHistory = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -82,7 +82,7 @@ const TripHistory = () => {
         const { message } = response.data;
         fetchReservation();
         MySwal.fire({
-          title: 'Success',
+          title: "Success",
           text: message,
           showCancelButton: false,
         });
@@ -90,8 +90,8 @@ const TripHistory = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -100,9 +100,9 @@ const TripHistory = () => {
 
   const formikAdd = useFormik({
     initialValues: {
-      review: '',
+      review: "",
       rating: 0,
-      homestay_id: '',
+      homestay_id: "",
     },
     validationSchema: addSchema,
     onSubmit: (values) => {
@@ -112,7 +112,7 @@ const TripHistory = () => {
 
   const handlerClick = (str?: string) => {
     const id = getHomestays_id(str);
-    formikAdd.setFieldValue('homestay_id', id);
+    formikAdd.setFieldValue("homestay_id", id);
   };
 
   const getHomestays_id = (name?: string) => {
@@ -156,12 +156,12 @@ const TripHistory = () => {
                   <button
                     key={value}
                     className={`mr-1 ${
-                      rating >= value ? 'text-warning' : 'text-base-300'
+                      rating >= value ? "text-warning" : "text-base-300"
                     }`}
                     onClick={() => {
                       handleStarClick(value);
-                      formikAdd.setFieldValue('rating', value);
-                      formikAdd.setFieldTouched('rating', true);
+                      formikAdd.setFieldValue("rating", value);
+                      formikAdd.setFieldTouched("rating", true);
                     }}
                     type="button"
                   >
@@ -175,14 +175,13 @@ const TripHistory = () => {
               )}
               <div className="w-full flex justify-end gap-3">
                 <div className="modal-action mt-0 ">
-                  <label
-                    htmlFor="modal-review"
-                    className="btn btn-ghost"
-                  >
+                  <label htmlFor="modal-review" className="btn btn-ghost">
                     Close
                   </label>
                 </div>
-                <button className="btn btn-primary w-32">Submit</button>
+                <button className="btn btn-primary w-32 text-white">
+                  Submit
+                </button>
               </div>
             </form>
           </Modals>
