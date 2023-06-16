@@ -21,7 +21,12 @@ const schemaConfirm = Yup.object().shape({
 
 const ConfirmPay = () => {
   const [load, setLoad] = useState<boolean>(false);
-  const [dataReserv, setDataReserv] = useState<reservType>();
+  const [dataReserv, setDataReserv] = useState<reservType | undefined>(
+    undefined
+  );
+
+  const [formValuesSet, setFormValuesSet] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const MySwal = withReactContent(swal);
@@ -56,7 +61,9 @@ const ConfirmPay = () => {
       .getReservById(ckToken, reservation_id)
       .then(async (response) => {
         const { data } = response.data;
-        setDataReserv(data);
+        await setDataReserv(data);
+        await formik.setFieldValue('amount', data.amount.toString());
+        await formik.setFieldValue('reservation_id', data.reservation_id);
       })
       .catch((error) => {
         const { data } = error.response;
@@ -88,6 +95,7 @@ const ConfirmPay = () => {
       .postPayment(ckToken, datapay)
       .then((response) => {
         const { message } = response.data;
+
         navigate('/trip');
 
         MyToast.fire({
@@ -108,10 +116,7 @@ const ConfirmPay = () => {
   };
 
   useEffect(() => {
-    fetchPayment();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    formik.setFieldValue('amount', dataReserv?.amount.toString());
-    formik.setFieldValue('reservation_id', reservation_id);
+    fetchPayment(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
