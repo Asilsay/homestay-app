@@ -1,33 +1,33 @@
-import Layout from '../components/Layout';
-import { FaStar } from 'react-icons/fa';
+import Layout from "../components/Layout";
+import { FaStar } from "react-icons/fa";
 
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from "react";
 
-import { Input, InputFile, TextArea } from '../components/Input';
-import { Modals } from '../components/Modals';
+import { Input, InputFile, TextArea } from "../components/Input";
+import { Modals } from "../components/Modals";
 
-const LazyCardReviews = lazy(() => import('../components/Card'));
+const LazyCardReviews = lazy(() => import("../components/Card"));
 
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { DetailHomeType } from '../utils/type';
-import withReactContent from 'sweetalert2-react-content';
-import swal from '../utils/swal';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useCookies } from 'react-cookie';
-import api from '../utils/api';
-import LoadingFull from '../components/LoadingFull';
-import toast from '../utils/toast';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { DetailHomeType } from "../utils/type";
+import withReactContent from "sweetalert2-react-content";
+import swal from "../utils/swal";
+import { useNavigate, useParams } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import api from "../utils/api";
+import LoadingFull from "../components/LoadingFull";
+import toast from "../utils/toast";
 
 const schema = Yup.object().shape({
-  name: Yup.string().required('Required'),
-  description: Yup.string().required('Required'),
-  address: Yup.string().required('Required'),
-  price: Yup.number().positive().integer().required('Required'),
+  name: Yup.string().required("Required"),
+  description: Yup.string().required("Required"),
+  address: Yup.string().required("Required"),
+  price: Yup.number().positive().integer().required("Required"),
 });
 
 const schemaImage = Yup.object().shape({
-  homestay_picture: Yup.mixed().required('Image is required'),
+  homestay_picture: Yup.mixed().required("Image is required"),
 });
 
 const HostDetail = () => {
@@ -41,7 +41,7 @@ const HostDetail = () => {
   const params = useParams();
   const { homestay_id } = params;
 
-  const [cookie] = useCookies(['token']);
+  const [cookie] = useCookies(["token"]);
   const ckToken = cookie.token;
 
   const [preview, setPreview] = useState<string | null>(null);
@@ -49,7 +49,7 @@ const HostDetail = () => {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.currentTarget.files?.[0];
     if (file) {
-      formikEditImage.setFieldValue('homestay_picture', file);
+      formikEditImage.setFieldValue("homestay_picture", file);
       setPreview(URL.createObjectURL(file));
     }
   };
@@ -62,16 +62,16 @@ const HostDetail = () => {
         const { data } = response.data;
         setDataHome(data);
         console.log(data);
-        formikEdit.setFieldValue('name', data.name);
-        formikEdit.setFieldValue('description', data.description);
-        formikEdit.setFieldValue('address', data.address);
-        formikEdit.setFieldValue('price', data.price);
+        formikEdit.setFieldValue("name", data.name);
+        formikEdit.setFieldValue("description", data.description);
+        formikEdit.setFieldValue("address", data.address);
+        formikEdit.setFieldValue("price", data.price);
       })
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -80,7 +80,7 @@ const HostDetail = () => {
   };
 
   const formatedPrice = (n: number) => {
-    const formattedNumber = n.toLocaleString('en-US', {
+    const formattedNumber = n.toLocaleString("en-US", {
       useGrouping: true,
       maximumFractionDigits: 0,
     });
@@ -95,15 +95,15 @@ const HostDetail = () => {
         formikEdit.resetForm();
         fetchDetail();
         MyToast.fire({
-          icon: 'success',
+          icon: "success",
           title: message,
         });
       })
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -118,15 +118,15 @@ const HostDetail = () => {
         formikEditImage.resetForm();
         fetchDetail();
         MyToast.fire({
-          icon: 'success',
+          icon: "success",
           title: message,
         });
       })
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -135,7 +135,7 @@ const HostDetail = () => {
 
   const formDataToPut = async (datad?: any) => {
     const formData = new FormData();
-    formData.append('homestay_picture', datad.homestay_picture);
+    formData.append("homestay_picture", datad.homestay_picture);
     await PostHomestaysImage(formData);
   };
 
@@ -151,9 +151,9 @@ const HostDetail = () => {
 
   const formikEdit = useFormik({
     initialValues: {
-      name: '',
-      description: '',
-      address: '',
+      name: "",
+      description: "",
+      address: "",
       price: 0,
     },
     validationSchema: schema,
@@ -167,17 +167,17 @@ const HostDetail = () => {
       .delHomestayById(ckToken, homestay_id)
       .then((response) => {
         const { message } = response.data;
-        navigate('/');
+        navigate("/");
 
         MyToast.fire({
-          icon: 'success',
+          icon: "success",
           title: message,
         });
       })
       .catch((error) => {
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${error.message}`,
           showCancelButton: false,
         });
@@ -186,8 +186,8 @@ const HostDetail = () => {
 
   const handleDelHomestays = async () => {
     MySwal.fire({
-      icon: 'question',
-      title: 'DELETE',
+      icon: "question",
+      title: "DELETE",
       text: `are you sure delete ?`,
       showCancelButton: true,
     }).then((result) => {
@@ -261,18 +261,15 @@ const HostDetail = () => {
               />
               <div className="w-full flex justify-end gap-3">
                 <div className="modal-action mt-0 ">
-                  <label
-                    htmlFor="modal-edit"
-                    className="btn btn-ghost"
-                  >
+                  <label htmlFor="modal-edit" className="btn btn-ghost">
                     Close
                   </label>
                   <button
                     type="submit"
-                    className="btn btn-secondary w-32"
+                    className="btn btn-secondary w-32 text-white"
                     onClick={() => {
                       const modalCheckbox = document.getElementById(
-                        'modal-edit'
+                        "modal-edit"
                       ) as HTMLInputElement;
                       if (modalCheckbox) {
                         modalCheckbox.checked = false;
@@ -298,7 +295,7 @@ const HostDetail = () => {
                   src={
                     preview
                       ? preview
-                      : 'https://placehold.co/600x400/png?text=placeholder+image'
+                      : "https://placehold.co/600x400/png?text=placeholder+image"
                   }
                   alt=""
                   className="w-full h-full object-center object-cover"
@@ -317,15 +314,12 @@ const HostDetail = () => {
 
               <div className="w-full flex justify-end gap-3">
                 <div className="modal-action mt-0 ">
-                  <label
-                    htmlFor="modal-image-edit"
-                    className="btn btn-ghost"
-                  >
+                  <label htmlFor="modal-image-edit" className="btn btn-ghost">
                     Close
                   </label>
                   <button
                     type="submit"
-                    className="btn btn-secondary w-32"
+                    className="btn btn-secondary w-32 text-white"
                   >
                     Submit
                   </button>
@@ -345,7 +339,7 @@ const HostDetail = () => {
                     src={
                       dataHome?.homestay_pictures?.[0].homestay_picture
                         ? dataHome?.homestay_pictures?.[0].homestay_picture
-                        : 'https://placehold.co/600x400/png?text=placehholder+image'
+                        : "https://placehold.co/600x400/png?text=placehholder+image"
                     }
                     alt=""
                     className="w-full h-full object-center object-cover"
@@ -392,15 +386,15 @@ const HostDetail = () => {
                   {dataHome?.description}
                 </p>
                 <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                  Location:{' '}
+                  Location:{" "}
                   <span className="font-normal">{dataHome?.address}</span>
                 </p>
                 <div className="divider"></div>
                 <div className="text-xl flex items-center font-semibold text-neutral capitalize mt-3 ">
                   <FaStar />
                   <p>
-                    {' '}
-                    &ensp;{dataHome?.average_rating} - {dataHome?.total_reviews}{' '}
+                    {" "}
+                    &ensp;{dataHome?.average_rating} - {dataHome?.total_reviews}{" "}
                     Reviews
                   </p>
                 </div>
@@ -414,12 +408,12 @@ const HostDetail = () => {
                       {dataHome?.reviews?.map((data, idx) => {
                         return (
                           <LazyCardReviews
-                            full_name={'anonim'}
+                            full_name={"anonim"}
                             key={idx}
                             rating={data.rating}
                             review={data.review}
                             user_picture={
-                              'https://ui-avatars.com/api/?name=Anonim'
+                              "https://ui-avatars.com/api/?name=Anonim"
                             }
                           />
                         );
@@ -432,7 +426,7 @@ const HostDetail = () => {
               <div className="w-2/6 p-3 h-full flex flex-col gap-5">
                 <div className="bg-base-300 rounded-3xl shadow-md p-5">
                   <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                    Rp{dataHome?.price ? formatedPrice(dataHome?.price) : 0}{' '}
+                    Rp{dataHome?.price ? formatedPrice(dataHome?.price) : 0}{" "}
                     <span className="font-normal">{` `}Night</span>
                   </p>
                   <div className="divider"></div>

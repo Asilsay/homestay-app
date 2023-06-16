@@ -1,41 +1,41 @@
-import Layout from '../components/Layout';
-import { FaStar } from 'react-icons/fa';
+import Layout from "../components/Layout";
+import { FaStar } from "react-icons/fa";
 
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from "react";
 
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { Input } from '../components/Input';
-import { DataReserveType, DetailHomeType } from '../utils/type';
-import withReactContent from 'sweetalert2-react-content';
-import { useNavigate, useParams } from 'react-router-dom';
-import swal from '../utils/swal';
-import { useCookies } from 'react-cookie';
-import api from '../utils/api';
-import LoadingFull from '../components/LoadingFull';
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Input } from "../components/Input";
+import { DataReserveType, DetailHomeType } from "../utils/type";
+import withReactContent from "sweetalert2-react-content";
+import { useNavigate, useParams } from "react-router-dom";
+import swal from "../utils/swal";
+import { useCookies } from "react-cookie";
+import api from "../utils/api";
+import LoadingFull from "../components/LoadingFull";
 
-const LazyCardReviews = lazy(() => import('../components/Card'));
+const LazyCardReviews = lazy(() => import("../components/Card"));
 
 const schemaReservasi = Yup.object().shape({
   checkin_date: Yup.date()
     .min(
       new Date(new Date().setDate(new Date().getDate() - 1)),
-      'Start date cannot be before today'
+      "Start date cannot be before today"
     )
-    .required('Start date is required'),
+    .required("Start date is required"),
   checkout_date: Yup.date()
-    .min(Yup.ref('checkin_date'), 'End date must be after start date')
+    .min(Yup.ref("checkin_date"), "End date must be after start date")
     .test(
-      'is-after-checkin',
-      'End date must be at least one day after start date',
+      "is-after-checkin",
+      "End date must be at least one day after start date",
       function (value) {
-        const checkinDate: any = this.resolve(Yup.ref('checkin_date'));
+        const checkinDate: any = this.resolve(Yup.ref("checkin_date"));
         const minimumCheckoutDate = new Date(checkinDate);
         minimumCheckoutDate.setDate(checkinDate.getDate() + 1);
         return !checkinDate || !value || value >= minimumCheckoutDate;
       }
     )
-    .required('Check-out date is required'),
+    .required("Check-out date is required"),
 });
 
 const Detail = () => {
@@ -49,13 +49,13 @@ const Detail = () => {
   const params = useParams();
   const { homestay_id } = params;
 
-  const [cookie] = useCookies(['token']);
+  const [cookie] = useCookies(["token"]);
   const ckToken = cookie.token;
 
   const formikDate = useFormik({
     initialValues: {
-      checkin_date: '',
-      checkout_date: '',
+      checkin_date: "",
+      checkout_date: "",
     },
     validationSchema: schemaReservasi,
     onSubmit: async (values) => {
@@ -79,8 +79,8 @@ const Detail = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -100,7 +100,7 @@ const Detail = () => {
           showCancelButton: false,
         }).then((result) => {
           if (result.isConfirmed) {
-            if (message === 'Available') {
+            if (message === "Available") {
               setCheckReserv(true);
             }
           }
@@ -109,8 +109,8 @@ const Detail = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -123,7 +123,7 @@ const Detail = () => {
       .then((response) => {
         const { data, message } = response.data;
         MySwal.fire({
-          title: 'Success',
+          title: "Success",
           text: message,
           showCancelButton: false,
         }).then((result) => {
@@ -135,8 +135,8 @@ const Detail = () => {
       .catch((error) => {
         const { data } = error.response;
         MySwal.fire({
-          icon: 'error',
-          title: 'Failed',
+          icon: "error",
+          title: "Failed",
           text: `error :  ${data.message}`,
           showCancelButton: false,
         });
@@ -144,7 +144,7 @@ const Detail = () => {
   };
 
   const formatedPrice = (n: number) => {
-    const formattedNumber = n.toLocaleString('en-US', {
+    const formattedNumber = n.toLocaleString("en-US", {
       useGrouping: true,
       maximumFractionDigits: 0,
     });
@@ -172,7 +172,7 @@ const Detail = () => {
                   src={
                     dataHome?.homestay_pictures?.[0].homestay_picture
                       ? dataHome?.homestay_pictures?.[0].homestay_picture
-                      : 'https://placehold.co/600x400/png?text=placehholder+image'
+                      : "https://placehold.co/600x400/png?text=placehholder+image"
                   }
                   alt=""
                   className="w-full h-full object-center object-cover"
@@ -213,15 +213,15 @@ const Detail = () => {
                 {dataHome?.description}
               </p>
               <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                Location:{' '}
+                Location:{" "}
                 <span className="font-normal">{dataHome?.address}</span>
               </p>
               <div className="divider"></div>
               <div className="text-xl flex items-center font-semibold text-neutral capitalize mt-3 ">
                 <FaStar />
                 <p>
-                  {' '}
-                  &ensp;{dataHome?.average_rating} - {dataHome?.total_reviews}{' '}
+                  {" "}
+                  &ensp;{dataHome?.average_rating} - {dataHome?.total_reviews}{" "}
                   Reviews
                 </p>
               </div>
@@ -235,12 +235,12 @@ const Detail = () => {
                     {dataHome?.reviews?.map((data, idx) => {
                       return (
                         <LazyCardReviews
-                          full_name={'anonim'}
+                          full_name={"anonim"}
                           key={idx}
                           rating={data.rating}
                           review={data.review}
                           user_picture={
-                            'https://ui-avatars.com/api/?name=Anonim'
+                            "https://ui-avatars.com/api/?name=Anonim"
                           }
                         />
                       );
@@ -253,7 +253,7 @@ const Detail = () => {
             <div className="w-2/6 p-3 h-full flex flex-col gap-5">
               <div className="bg-base-300 rounded-3xl shadow-md p-5">
                 <p className="text-xl font-semibold text-neutral capitalize mt-3 ">
-                  Rp{dataHome?.price ? formatedPrice(dataHome?.price) : 0}{' '}
+                  Rp{dataHome?.price ? formatedPrice(dataHome?.price) : 0}{" "}
                   <span className="font-normal">{` `}Night</span>
                 </p>
                 <div className="divider"></div>
@@ -262,10 +262,7 @@ const Detail = () => {
                   className="w-full flex flex-col justify-center"
                 >
                   <div className="w-full">
-                    <label
-                      htmlFor="checkin_date"
-                      className="label"
-                    >
+                    <label htmlFor="checkin_date" className="label">
                       <p className="label-text">Start Date: </p>
                     </label>
                     <Input
@@ -282,10 +279,7 @@ const Detail = () => {
                     />
                   </div>
                   <div className="w-full">
-                    <label
-                      htmlFor="checkout_date"
-                      className="label"
-                    >
+                    <label htmlFor="checkout_date" className="label">
                       <p className="label-text">End Date: </p>
                     </label>
                     <Input
@@ -304,7 +298,7 @@ const Detail = () => {
                   {!checkReserv ? (
                     <button
                       id="check"
-                      className="btn btn-primary mt-3"
+                      className="btn btn-primary mt-3 text-white"
                       type="submit"
                     >
                       Check availability
@@ -325,7 +319,7 @@ const Detail = () => {
                   </button>
                   <button
                     id="check"
-                    className="btn btn-primary mt-3 w-[45%]"
+                    className="btn btn-primary mt-3 w-[45%] text-white"
                     onClick={() => PostReserv(dataReserv)}
                   >
                     Make Reservation
