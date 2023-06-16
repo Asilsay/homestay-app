@@ -1,7 +1,7 @@
 import Layout from '../components/Layout';
 import withReactContent from 'sweetalert2-react-content';
 import swal from '../utils/swal';
-import Card from '../components/CardList';
+import {Card} from '../components/CardList';
 import { useCookies } from 'react-cookie';
 import api from '../utils/api';
 import { useEffect, useState } from 'react';
