@@ -105,6 +105,14 @@ export default {
         Authorization: `Bearer ${token}`,
       },
     }),
+  getMyHosting: (token?: string) =>
+    instance({
+      method: 'GET',
+      url: 'users/homestays',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
 
   // --- pictures ---
   PostImage: (token?: string, home_id?: string, data?: any) =>
